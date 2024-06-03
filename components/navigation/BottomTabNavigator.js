@@ -1,8 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StyleSheet, Platform, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
 import { THEME } from "../constants";
-import { useNavigation } from "@react-navigation/native";
 
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -11,16 +10,15 @@ import ChatScreen from "../screens/ChatScreen";
 
 const Tab = createBottomTabNavigator();
 
-const homeName = "Home";
-const chatName = "Chat";
+const homeName = "HomeTab";
+const chatName = "ChatTab";
 
 //por mientras
-const notificationsName = "Notifications";
-const addName = "Add";
-const favName = "Favourite";
+const notificationsName = "NotificationsTab";
+const addName = "AddTab";
+const favName = "FavouriteTab";
 
 function BottomTabNavigator() {
-
   return (
     <Tab.Navigator
       initialRouteName={homeName} //ruta inicial que comienza la app
@@ -56,22 +54,10 @@ function BottomTabNavigator() {
         //   ),
         // }}
       />
-      <Tab.Screen
-        name={chatName}
-        component={ChatScreen}
-      />
-      <Tab.Screen
-        name={addName}
-        component={ChatScreen}
-      />
-      <Tab.Screen
-        name={notificationsName}
-        component={ChatScreen}
-      />
-      <Tab.Screen
-        name={favName}
-        component={ChatScreen}
-      />
+      <Tab.Screen name={chatName} component={ChatScreen} />
+      <Tab.Screen name={addName} component={ChatScreen} />
+      <Tab.Screen name={notificationsName} component={ChatScreen} />
+      <Tab.Screen name={favName} component={ChatScreen} />
     </Tab.Navigator>
   );
 }
