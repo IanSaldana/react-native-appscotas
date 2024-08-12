@@ -1,87 +1,80 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  Image,
-} from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
+import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
-import React from "react";
 
-const Messages = [
-  {
-    id: "1",
-    userName: "Jenny Doe",
-    messageTime: "4 mins ago",
-    messageText:
-      "Hey there, this is my test for a post of my social app in React Native.",
-  },
-  {
-    id: "2",
-    userName: "John Doe",
+const ChatScreen = ({ navigation, route }) => {
+  const [messages, setMessages] = useState([
+    {
+      _id: 1,
+      text: "¡Hola! ¿Cómo puedo ayudarte hoy?",
+      createdAt: new Date(),
+      user: {
+        _id: 2,
+        name: "Soporte",
+        avatar: "https://placeimg.com/140/140/any",
+      },
+    },
+  ]);
 
-    messageTime: "2 hours ago",
-    messageText:
-      "Hey there, this is my test for a post of my social app in React Native.",
-  },
-  {
-    id: "3",
-    userName: "Ken William",
-    messageTime: "1 hours ago",
-    messageText:
-      "Hey there, this is my test for a post of my social app in React Native.",
-  },
-  {
-    id: "4",
-    userName: "Selina Paul",
-    messageTime: "1 day ago",
-    messageText:
-      "Hey there, this is my test for a post of my social app in React Native.",
-  },
-  {
-    id: "5",
-    userName: "Christy Alex",
-    messageTime: "2 days ago",
-    messageText:
-      "Hey there, this is my test for a post of my social app in React Native.",
-  },
-];
+  const user = {
+    name: "Carlos Díaz",
+    avatar: "https://placeimg.com/140/140/people",
+  };
 
-const ChatScreen = () => {
+  const onSend = (newMessages = []) => {
+    setMessages(GiftedChat.append(messages, newMessages));
+  };
+
   return (
-    <SafeAreaView styles={styles.main}>
-      <View>
-        <FlatList
-          data={Messages}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View styles={styles.flatListcontainer}>
-              {/* <Image source={{uri: item.img}}/> */}
-              <Text>{item.userName}</Text>
-            </View>
-          )}
-        />
+    <View style={styles.container}>
+      {/* Encabezado personalizado */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={25} color="#FFF" />
+        </TouchableOpacity>
+        <Image source={{ uri: user.avatar }} style={styles.profileImage} />
+        <Text style={styles.headerTitle}>{user.name}</Text>
       </View>
-    </SafeAreaView>
+
+      {/* Chat */}
+      <GiftedChat
+        messages={messages}
+        onSend={(messages) => onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+        renderAvatar={null} // Si quieres ocultar el avatar del usuario en el chat
+      />
+    </View>
   );
 };
+
 const styles = StyleSheet.create({
-  main: {
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
+    backgroundColor: "#FFF",
   },
-  flatListcontainer: {
-    backgroundColor: "#fff",
-    marginVertical: 10,
-    marginHorizontal: 16,
-    paddingBottom: 15,
-    borderRadius: 6,
-    position: "relative",
+  header: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: THEME.primary,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginLeft: 10,
+  },
+  headerTitle: {
+    fontSize: 18,
+    color: "#FFF",
+    fontWeight: "bold",
+    marginLeft: 10,
   },
 });
+
 export default ChatScreen;

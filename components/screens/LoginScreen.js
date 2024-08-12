@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 const LoginScreen = () => {
   const navigation = useNavigation();
   const handleLogin = () => {
-    navigation.navigate("Home");
+    navigation.navigate("Loading");
   };
   return (
     <SafeAreaView style={styles.main}>
@@ -42,9 +42,16 @@ const LoginScreen = () => {
             >
               <Text style={styles.loginText}>Inicia sesión</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.registerBtn}
+              onPress={() => navigation.navigate("Register")}
+            >
+              <Text style={styles.loginText}>Registrate</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity>
-              <Text style={styles.forgotPassText}>Forgot Password</Text>
+              <Text style={styles.forgotPassText}>Olviaste tu contraseña?</Text>
             </TouchableOpacity>
           </View>
 
@@ -117,6 +124,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 55,
     backgroundColor: THEME.primary,
+    borderRadius: 40,
+  },
+  registerBtn: {
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: 55,
+    marginTop: 10,
+    backgroundColor: THEME.secondary,
     borderRadius: 40,
   },
   loginText: {

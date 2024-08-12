@@ -7,16 +7,20 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import HomeScreen from "../screens/HomeScreen";
 import ChatScreen from "../screens/ChatScreen";
+import FavouriteScreen from "../screens/FavouriteScreen";
+import NotificationScreen from "../screens/NotificationScreen";
+import CreatePetScreen from "../screens/CreatePetScreen";
+import ChatListScreen from "../screens/ChatListScreen";
 
 const Tab = createBottomTabNavigator();
 
-const homeName = "HomeTab";
-const chatName = "ChatTab";
+const homeName = "Inicio";
+const chatListName = "Mensajeria";
 
 //por mientras
-const notificationsName = "NotificationsTab";
-const addName = "AddTab";
-const favName = "FavouriteTab";
+const notificationsName = "Notificaciones";
+const addName = "Add";
+const favName = "Favoritos";
 
 function BottomTabNavigator() {
   return (
@@ -32,7 +36,7 @@ function BottomTabNavigator() {
           let rn = route.name;
           if (rn === homeName) {
             iconName = focused ? "home" : "home-outline";
-          } else if (rn === chatName) {
+          } else if (rn === chatListName) {
             iconName = focused ? "chatbubbles" : "chatbubbles-outline";
           } else if (rn === notificationsName) {
             iconName = focused ? "notifications" : "notifications-outline";
@@ -54,24 +58,12 @@ function BottomTabNavigator() {
         //   ),
         // }}
       />
-      <Tab.Screen name={chatName} component={ChatScreen} />
-      <Tab.Screen name={addName} component={ChatScreen} />
-      <Tab.Screen name={notificationsName} component={ChatScreen} />
-      <Tab.Screen name={favName} component={ChatScreen} />
+      <Tab.Screen name={chatListName} component={ChatListScreen} />
+      <Tab.Screen name={addName} component={CreatePetScreen} />
+      <Tab.Screen name={notificationsName} component={NotificationScreen} />
+      <Tab.Screen name={favName} component={FavouriteScreen} />
     </Tab.Navigator>
   );
 }
 
 export default BottomTabNavigator;
-
-const styles = StyleSheet.create({
-  tabBarStyle: {
-    position: "absolute",
-    backgroundColor: THEME.transparent,
-    borderTopWidth: 0,
-    bottom: 5,
-    right: 10,
-    left: 10,
-    height: 92,
-  },
-});
