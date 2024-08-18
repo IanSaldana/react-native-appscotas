@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
@@ -25,6 +26,8 @@ const ProfileScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState("+93123135");
   const [website, setWebsite] = useState("www.gfx.com");
   const [password, setPassword] = useState("xxx@gmail.com");
+  const [modalVisible, setModalVisible] = useState(false); // Estado para el modal
+  const [isPremium, setIsPremium] = useState(false); // Estado para el estado de suscripción
 
   const handleLogout = () => {
     // Lógica para cerrar sesión
@@ -35,6 +38,7 @@ const ProfileScreen = () => {
 
   const handleUpgrade = () => {
     // Lógica para actualizar a cuenta premium
+    setModalVisible(true);
     console.log("Actualizando a cuenta premium");
   };
 
@@ -45,6 +49,12 @@ const ProfileScreen = () => {
   const handleSave = () => {
     setIsEditing(false); // Desactivar el modo de edición y guardar los cambios
     console.log("Cambios guardados");
+  };
+  const handleSubscribe = () => {
+    // Aquí puedes agregar la lógica de suscripción real, como llamar a un servicio de pago
+    console.log("Suscrito a premium");
+    setIsPremium(true); // Cambia el estado a premium
+    setModalVisible(false); // Cierra el modal
   };
 
   const handleImagePicker = async () => {
@@ -88,7 +98,9 @@ const ProfileScreen = () => {
           )}
         </TouchableOpacity>
         <Text style={styles.profileName}>Ian</Text>
-        <Text style={styles.profileJob}>Adoptante</Text>
+        <Text style={styles.profileJob}>
+          Adoptante{isPremium && " • Premium"}
+        </Text>
         {!isEditing ? (
           <TouchableOpacity
             style={[styles.button, styles.upgradeButton]}
@@ -156,7 +168,7 @@ const ProfileScreen = () => {
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
+        <Text style={styles.buttonText}>Cerrar Sesión</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -164,9 +176,39 @@ const ProfileScreen = () => {
         onPress={handleUpgrade}
       >
         <Text style={[styles.buttonText, styles.upgradeButtonText]}>
-          Upgrade to Premium
+          Actualizar a premium
         </Text>
       </TouchableOpacity>
+
+      {/* Modal para mostrar los beneficios */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Beneficios de Premium</Text>
+            <Text style={styles.modalText}>• Publicar mascotas ilimitadas</Text>
+            {/* Puedes agregar más beneficios aquí */}
+
+            <TouchableOpacity
+              style={styles.subscribeButton}
+              onPress={handleSubscribe}
+            >
+              <Text style={styles.subscribeButtonText}>Suscribirse</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -244,6 +286,45 @@ const styles = StyleSheet.create({
   },
   upgradeButtonText: {
     color: THEME.primary,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  subscribeButton: {
+    backgroundColor: THEME.primary,
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  subscribeButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  closeButton: {
+    alignItems: "center",
+    padding: 10,
+  },
+  closeButtonText: {
+    color: THEME.primary,
+    fontSize: 16,
   },
 });
 
