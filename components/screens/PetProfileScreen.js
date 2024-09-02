@@ -10,29 +10,34 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import MapView, { Marker } from "react-native-maps";
+import { petsInitial } from "../constants/data"; // Importa la lista de mascotas
+import { useFavorites } from "../context/FavouriteContext"; // Importa el contexto de favoritos
 
 const PetProfileScreen = ({ route, navigation }) => {
   const { petId } = route.params;
+  const { favorites, toggleFavorite } = useFavorites(); // Usa el contexto de favoritos para agregar favoritos
 
-  // Busca la mascota por ID o carga los detalles de la mascota desde un backend
-  // Aquí se muestra un ejemplo simple con datos estáticos
-  const petDetails = {
-    id: petId,
-    name: "Toby",
-    species: "Perro",
-    breed: "Golden Retriever",
-    age: "Joven",
-    color: "Café claro",
-    gender: "Macho",
-    vaccinated: true,
-    adoptionFee: "Gratis",
-    description:
-      "Le gusta jugar al aire libre, le gusta que le hagan cariño y que jueguen con él. No tiene necesidades médicas. Es un perro muy cariñoso y activo.",
-    location: {
-      latitude: 37.78825,
-      longitude: -122.4324,
-    },
-    image: require("../../assets/images/mascota1.jpeg"),
+  // Buscar la mascota por ID en la lista de mascotas
+  const petDetails = petsInitial.find((pet) => pet.id === petId);
+
+  if (!petDetails) {
+    return (
+      <SafeAreaView style={styles.main}>
+        <Text style={styles.errorText}>Mascota no encontrada</Text>
+      </SafeAreaView>
+    );
+  }
+  const isFavorite = favorites.some((fav) => fav.id === petDetails.id);
+  const handleToggleFavorite = () => {
+    toggleFavorite(petDetails);
+    console.log(
+      isFavorite ? "Eliminado de favoritos:" : "Agregado a favoritos:",
+      petDetails.name
+    );
+  };
+
+  const handleAdopt = () => {
+    console.log("Agregado a Lista de Deseos");
   };
 
   return (
@@ -51,6 +56,7 @@ const PetProfileScreen = ({ route, navigation }) => {
         <View style={styles.detailsContainer}>
           <Text style={styles.petName}>{petDetails.name}</Text>
 
+          {/* Información de la mascota */}
           <View style={styles.infoRow}>
             <Icon name="paw" size={20} color="#FFA726" />
             <Text style={styles.infoText}>Especie: {petDetails.species}</Text>
@@ -81,12 +87,23 @@ const PetProfileScreen = ({ route, navigation }) => {
           <Text style={styles.sectionTitle}>Historia de la mascota</Text>
           <Text style={styles.petDescription}>{petDetails.description}</Text>
 
-          <Text style={styles.sectionTitle}>Ubicación</Text>
-
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.favoriteButton}>
-              <Icon name="heart" size={20} color="#FFF" />
-              <Text style={styles.buttonText}>Marcar Favorito</Text>
+            <TouchableOpacity
+              style={styles.favoriteButton}
+              onPress={handleToggleFavorite}
+            >
+              <Icon
+                name={isFavorite ? "heart" : "heart-outline"}
+                size={20}
+                color="#FFF"
+              />
+              <Text style={styles.buttonText}>
+                {isFavorite ? "Quitar de Favoritos" : "Marcar Favorito"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.adoptButton} onPress={handleAdopt}>
+              <Icon name="heart-outline" size={20} color="#FFF" />
+              <Text style={styles.buttonText}>Adoptar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.chatButton}>
               <Icon name="chatbubbles" size={20} color="#FFF" />
@@ -179,10 +196,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
   },
+  adoptButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4CAF50",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
   buttonText: {
     marginLeft: 10,
     color: "#FFF",
     fontSize: 16,
+  },
+  errorText: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 18,
+    color: "red",
   },
 });
 

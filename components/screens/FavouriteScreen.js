@@ -12,28 +12,11 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
-
-const favoritesData = [
-  {
-    id: "1",
-    name: "Buddy",
-    image: require("../../assets/images/mascota1.jpeg"),
-  },
-  {
-    id: "2",
-    name: "Max",
-    image: require("../../assets/images/mascota2.jpeg"),
-  },
-  {
-    id: "3",
-    name: "Bella",
-    image: require("../../assets/images/mascota3.jpeg"),
-  },
-  // Puedes agregar más datos de mascotas favoritas aquí
-];
+import { useFavorites } from "../context/FavouriteContext"; // Importa el contexto de favoritos
 
 const FavoritesScreen = () => {
   const navigation = useNavigation();
+  const { favorites } = useFavorites(); // Obtén los favoritos del contexto
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -56,7 +39,7 @@ const FavoritesScreen = () => {
           <Text style={styles.headerTitle}>Favoritos</Text>
         </View>
         <FlatList
-          data={favoritesData}
+          data={favorites} // Usa los datos de favoritos del contexto
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}

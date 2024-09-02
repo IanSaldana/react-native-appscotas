@@ -17,40 +17,9 @@ import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Ionicons";
 import RNPickerSelect from "react-native-picker-select";
 import Slider from "@react-native-community/slider";
+import { petsInitial } from "../constants/data";
 
 const HomeScreen = () => {
-  const petsInitial = [
-    {
-      id: "1",
-      name: "Buddy",
-      species: "dog",
-      color: "brown",
-      age: 3,
-      vaccinated: true,
-      description: "Friendly dog",
-      image: require("../../assets/images/mascota1.jpeg"),
-    },
-    {
-      id: "2",
-      name: "Max",
-      species: "dog",
-      color: "black",
-      age: 5,
-      vaccinated: false,
-      description: "Friendly dog",
-      image: require("../../assets/images/mascota2.jpeg"),
-    },
-    {
-      id: "3",
-      name: "Misty",
-      species: "cat",
-      color: "yellow",
-      age: 7,
-      vaccinated: true,
-      description: "Gatita muy tierna",
-      image: require("../../assets/images/mascota3.jpeg"),
-    },
-  ];
   const navigation = useNavigation();
   const [pets, setPets] = useState(petsInitial);
   const [searchText, setSearchText] = useState(""); // Estado para el texto de búsqueda
