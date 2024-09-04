@@ -5,16 +5,34 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import * as React from "react";
 import { THEME } from "../constants";
 import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext"; // Importar el contexto
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const { checkUserExists } = React.useContext(UserContext); // Consumir el contexto de usuario
+
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
   const handleLogin = () => {
-    navigation.navigate("Loading");
+    const user = checkUserExists(email, password);
+
+    if (!user) {
+      Alert.alert(
+        "Error",
+        "No existe una cuenta creada con estas credenciales."
+      );
+    } else {
+      console.log("Usuario encontrado:", user);
+      navigation.navigate("Loading"); // Redirigir a la pantalla de carga o a la página principal
+    }
   };
+
   return (
     <SafeAreaView style={styles.main}>
       <View style={styles.container}>
@@ -26,15 +44,22 @@ const LoginScreen = () => {
           <Text style={styles.loginContinueTxt}>
             Inicia sesión para continuar
           </Text>
-          <TextInput style={styles.input} placeholder="email@email.com" />
+          <TextInput
+            style={styles.input}
+            placeholder="email@email.com"
+            value={email}
+            onChangeText={setEmail}
+          />
           <TextInput
             style={styles.input}
             secureTextEntry={true}
             placeholder="contraseña"
+            value={password}
+            onChangeText={setPassword}
           />
 
           <View style={styles.loginBtnWrapper}>
-            {/******************** LOGIN BUTTON *********************/}
+            {/* Botón de inicio de sesión */}
             <TouchableOpacity
               activeOpacity={0.7}
               style={styles.loginBtn}
@@ -51,11 +76,11 @@ const LoginScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity>
-              <Text style={styles.forgotPassText}>Olviaste tu contraseña?</Text>
+              <Text style={styles.forgotPassText}>
+                ¿Olvidaste tu contraseña?
+              </Text>
             </TouchableOpacity>
           </View>
-
-          {/***************** FORGOT PASSWORD BUTTON *****************/}
         </View>
       </View>
     </SafeAreaView>
@@ -100,7 +125,6 @@ const styles = StyleSheet.create({
     height: 55,
     paddingVertical: 0,
   },
-  // Login Btn Styles
   loginBtnWrapper: {
     height: 55,
     marginTop: 12,
@@ -147,7 +171,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 15,
   },
-  // footer
   footer: {
     position: "absolute",
     bottom: 20,
@@ -162,7 +185,6 @@ const styles = StyleSheet.create({
     color: THEME.primary,
     fontWeight: "bold",
   },
-  // utils
   wFull: {
     width: "100%",
   },
@@ -176,4 +198,5 @@ const styles = StyleSheet.create({
     marginRight: 7,
   },
 });
+
 export default LoginScreen;

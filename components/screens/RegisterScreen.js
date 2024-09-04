@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -10,28 +10,33 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { THEME } from "../constants";
 import RNPickerSelect from "react-native-picker-select";
+import { UserContext } from "../context/UserContext"; // Importar el contexto
 
 const RegisterScreen = () => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(""); // Estado para el nombre
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [selectedType, setSelectedType] = useState("persona");
-
+  const { userType, registerUser } = useContext(UserContext); // Usar el contexto
   const navigation = useNavigation();
 
   const handleRegister = () => {
-    if (password !== confirmPassword || (password && confirmPassword === "")) {
-      Alert.alert("Error", "Error al registrar");
+    if (password !== confirmPassword || !password || !confirmPassword) {
+      Alert.alert("Error", "Las contraseñas no coinciden o están vacías.");
       return;
     }
 
-    // Aquí puedes agregar lógica adicional para registrar el usuario, como hacer una llamada a una API
+    if (!name || !email) {
+      Alert.alert("Error", "Todos los campos son obligatorios.");
+      return;
+    }
 
-    // Si el registro es exitoso, redirige a la pantalla de login
+    // Registrar usuario con tipo, email, contraseña y nombre
+    registerUser(userType, email, password, name); // Asegurarse de pasar el nombre
+
     Alert.alert(
       "Usuario Registrado",
-      "El usuario ha sido registrado con éxito",
+      "El usuario ha sido registrado con éxito como " + userType,
       [
         {
           text: "OK",
@@ -74,7 +79,7 @@ const RegisterScreen = () => {
         secureTextEntry
       />
       <RNPickerSelect
-        onValueChange={(value) => setSelectedType(value)}
+        onValueChange={(value) => registerUser(value)} // Actualiza el tipo de usuario
         items={[
           { label: "Persona", value: "persona" },
           { label: "Organización", value: "organizacion" },

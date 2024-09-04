@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -13,48 +13,64 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
-import { THEME } from "../constants"; // Asegúrate de tener un archivo de temas para los colores y estilos
+import { THEME } from "../constants";
 import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../context/UserContext"; // Importar el contexto
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const [isEditing, setIsEditing] = useState(false); // Estado para modo de edición
+  const { currentUser, updateUser, logout } = useContext(UserContext); // Usar el contexto para obtener y actualizar el usuario
+
+  // Estado local para edición de perfil
+  const [isEditing, setIsEditing] = useState(false);
   const [profileImage, setProfileImage] = useState(
-    require("../../assets/images/person.jpeg")
-  ); // Estado para la imagen de perfil
-  const [email, setEmail] = useState("xxx@gmail.com");
-  const [phoneNumber, setPhoneNumber] = useState("+93123135");
-  const [website, setWebsite] = useState("www.gfx.com");
-  const [password, setPassword] = useState("xxx@gmail.com");
-  const [modalVisible, setModalVisible] = useState(false); // Estado para el modal
-  const [isPremium, setIsPremium] = useState(false); // Estado para el estado de suscripción
+    currentUser?.photo || require("../../assets/images/person.jpeg")
+  );
+  const [name, setName] = useState(currentUser?.name || "");
+  const [email, setEmail] = useState(currentUser?.email || "");
+  const [password, setPassword] = useState(currentUser?.password || "");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isPremium, setIsPremium] = useState(currentUser?.isPremium || false);
+  const [userType, setUserType] = useState(currentUser?.type || "persona");
 
   const handleLogout = () => {
-    // Lógica para cerrar sesión
-    console.log("Cerrando sesión");
-    Alert.alert("Cerrando sesion", "Haz salido con exito");
+    logout(); // Llamar a la función de logout del contexto
+    Alert.alert("Cerrando sesión", "Has salido con éxito.");
     navigation.navigate("Login");
   };
 
   const handleUpgrade = () => {
-    // Lógica para actualizar a cuenta premium
     setModalVisible(true);
-    console.log("Actualizando a cuenta premium");
   };
 
   const handleEdit = () => {
-    setIsEditing(true); // Activar el modo de edición
+    setIsEditing(true);
   };
 
   const handleSave = () => {
-    setIsEditing(false); // Desactivar el modo de edición y guardar los cambios
+    const updatedUser = {
+      ...currentUser,
+      name,
+      email,
+      password,
+      photo: profileImage.uri ? profileImage : currentUser.photo,
+      isPremium,
+      type: userType,
+    };
+
+    updateUser(updatedUser); // Actualizar los datos del usuario en el contexto
+    setIsEditing(false);
     console.log("Cambios guardados");
   };
+
   const handleSubscribe = () => {
-    // Aquí puedes agregar la lógica de suscripción real, como llamar a un servicio de pago
-    console.log("Suscrito a premium");
-    setIsPremium(true); // Cambia el estado a premium
-    setModalVisible(false); // Cierra el modal
+    setIsPremium(true); // Actualizar el estado local de isPremium
+    const updatedUser = {
+      ...currentUser,
+      isPremium: true, // Actualizar el estado de isPremium en el usuario
+    };
+    updateUser(updatedUser); // Guardar la actualización en el contexto
+    setModalVisible(false);
   };
 
   const handleImagePicker = async () => {
@@ -73,6 +89,16 @@ const ProfileScreen = () => {
     }
   };
 
+  // Determinar el tipo de usuario mostrado
+  const displayUserType = () => {
+    if (userType === "persona") {
+      return "Adoptante";
+    } else if (userType === "organizacion") {
+      return isPremium ? "Organización Premium" : "Organización Básica";
+    }
+    return "";
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar translucent={false} />
@@ -84,10 +110,7 @@ const ProfileScreen = () => {
 
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={handleImagePicker}>
-          <Image
-            source={profileImage} // Reemplaza con la URL de tu imagen
-            style={styles.profileImage}
-          />
+          <Image source={profileImage} style={styles.profileImage} />
           {isEditing && (
             <Icon
               name="pencil-outline"
@@ -97,10 +120,17 @@ const ProfileScreen = () => {
             />
           )}
         </TouchableOpacity>
-        <Text style={styles.profileName}>Ian</Text>
-        <Text style={styles.profileJob}>
-          Adoptante{isPremium && " • Premium"}
-        </Text>
+        {isEditing ? (
+          <TextInput
+            style={styles.profileName}
+            value={name}
+            onChangeText={setName}
+            editable={isEditing}
+          />
+        ) : (
+          <Text style={styles.profileName}>{name}</Text>
+        )}
+        <Text style={styles.profileJob}>{displayUserType()}</Text>
         {!isEditing ? (
           <TouchableOpacity
             style={[styles.button, styles.upgradeButton]}
@@ -130,28 +160,6 @@ const ProfileScreen = () => {
           editable={isEditing}
           value={email}
           onChangeText={setEmail}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Icon name="call-outline" size={20} color={THEME.gray} />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          editable={isEditing}
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Icon name="globe-outline" size={20} color={THEME.gray} />
-        <TextInput
-          style={styles.input}
-          placeholder="Website"
-          editable={isEditing}
-          value={website}
-          onChangeText={setWebsite}
         />
       </View>
 
@@ -191,7 +199,12 @@ const ProfileScreen = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Beneficios de Premium</Text>
             <Text style={styles.modalText}>• Publicar mascotas ilimitadas</Text>
-            {/* Puedes agregar más beneficios aquí */}
+            <Text style={styles.modalText}>
+              • Permite múltiples fotos y videos por mascota.
+            </Text>
+            <Text style={styles.modalText}>
+              • Sin limite de chats simultáneos.
+            </Text>
 
             <TouchableOpacity
               style={styles.subscribeButton}
