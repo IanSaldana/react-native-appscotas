@@ -1,4 +1,3 @@
-// src/context/UserContext.js
 import React, { createContext, useState } from "react";
 
 // Crear el contexto
@@ -9,6 +8,7 @@ export const UserProvider = ({ children }) => {
   const [userType, setUserType] = useState("persona");
   const [registeredUsers, setRegisteredUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [pets, setPets] = useState([]); // Estado para almacenar la lista de mascotas
 
   // Función para registrar un usuario
   const registerUser = (type, email, password, name) => {
@@ -19,7 +19,7 @@ export const UserProvider = ({ children }) => {
       name,
       photo: null,
       isPremium: false,
-    }; // Incluyendo isPremium
+    };
     setUserType(type);
     setRegisteredUsers((prevUsers) => [...prevUsers, newUser]);
   };
@@ -37,7 +37,7 @@ export const UserProvider = ({ children }) => {
 
   // Función para actualizar los datos del usuario
   const updateUser = (updatedUser) => {
-    setCurrentUser(updatedUser); // Actualiza el usuario actual con los datos nuevos
+    setCurrentUser(updatedUser);
     setRegisteredUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.email === updatedUser.email ? updatedUser : user
@@ -50,6 +50,11 @@ export const UserProvider = ({ children }) => {
     setCurrentUser(null);
   };
 
+  // Función para agregar una mascota
+  const addPet = (pet) => {
+    setPets((prevPets) => [pet, ...prevPets]); // Agrega la mascota al principio de la lista
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -59,6 +64,8 @@ export const UserProvider = ({ children }) => {
         updateUser,
         logout,
         currentUser,
+        pets,
+        addPet,
       }}
     >
       {children}
