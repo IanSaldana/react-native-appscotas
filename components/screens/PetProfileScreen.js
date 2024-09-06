@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,18 +7,21 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import MapView, { Marker } from "react-native-maps";
-import { petsInitial } from "../constants/data"; // Importa la lista de mascotas
-import { useFavorites } from "../context/FavouriteContext"; // Importa el contexto de favoritos
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useFavorites } from "../context/FavouriteContext";
+import { petsInitial } from "../constants/data";
+import { THEME } from "../constants";
 
 const PetProfileScreen = ({ route, navigation }) => {
   const { petId } = route.params;
-  const { favorites, toggleFavorite } = useFavorites(); // Usa el contexto de favoritos para agregar favoritos
+  const { favorites, toggleFavorite } = useFavorites();
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  // Buscar la mascota por ID en la lista de mascotas
   const petDetails = petsInitial.find((pet) => pet.id === petId);
+  const isOrganization = true; // Cambiar esta lógica según el estado de la organización
 
   if (!petDetails) {
     return (
@@ -27,194 +30,344 @@ const PetProfileScreen = ({ route, navigation }) => {
       </SafeAreaView>
     );
   }
+
   const isFavorite = favorites.some((fav) => fav.id === petDetails.id);
   const handleToggleFavorite = () => {
     toggleFavorite(petDetails);
-    console.log(
-      isFavorite ? "Eliminado de favoritos:" : "Agregado a favoritos:",
-      petDetails.name
-    );
   };
 
   const handleAdopt = () => {
-    console.log("Agregado a Lista de Deseos");
+    navigation.navigate("Adopt", { petDetails });
+  };
+
+  const handleContact = () => {
+    console.log("Contactar con la organización");
+  };
+
+  const handleEditPet = () => {
+    navigation.navigate("CreatePet", { petDetails });
+  };
+
+  const handleImagePress = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   return (
     <SafeAreaView style={styles.main}>
       <ScrollView style={styles.container}>
+        {/* Imagen y botones del encabezado */}
         <View style={styles.imageContainer}>
-          <Image source={petDetails.image} style={styles.petImage} />
+          <TouchableOpacity onPress={handleImagePress}>
+            <Image source={petDetails.image} style={styles.petImage} />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
             <Icon name="arrow-back" size={25} color="#fff" />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.favoriteButtonHeader}
+            onPress={handleToggleFavorite}
+          >
+            <FontAwesome
+              name={isFavorite ? "heart" : "heart-o"}
+              size={25}
+              color="white"
+            />
+          </TouchableOpacity>
+          {isOrganization && (
+            <TouchableOpacity style={styles.editButton} onPress={handleEditPet}>
+              <FontAwesome name="edit" size={25} color="white" />
+            </TouchableOpacity>
+          )}
         </View>
+        {/* Modal para la imagen en grande */}
+        <Modal visible={isModalVisible} transparent={true}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={closeModal}
+            >
+              <Icon name="close" size={30} color="white" />
+            </TouchableOpacity>
+            <Image source={petDetails.image} style={styles.modalImage} />
+          </View>
+        </Modal>
 
+        {/* Detalles de la mascota */}
         <View style={styles.detailsContainer}>
-          <Text style={styles.petName}>{petDetails.name}</Text>
+          <Text style={styles.petName}>
+            {petDetails.name}{" "}
+            <Text style={styles.petBreed}>({petDetails.species})</Text>
+          </Text>
 
-          {/* Información de la mascota */}
-          <View style={styles.infoRow}>
-            <Icon name="paw" size={20} color="#FFA726" />
-            <Text style={styles.infoText}>Especie: {petDetails.species}</Text>
+          {/* Etiquetas */}
+          <View style={styles.tagsContainer}>
+            <Text style={styles.tag}>{`${petDetails.age} años`}</Text>
+            <Text style={styles.tag}>
+              {petDetails.gender === "Macho" ? "Adulto" : "Adulta"}
+            </Text>
+            <Text style={styles.tag}>{petDetails.color}</Text>
           </View>
 
-          <View style={styles.infoRow}>
-            <Icon name="calendar" size={20} color="#66BB6A" />
-            <Text style={styles.infoText}>Edad: {petDetails.age}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Icon name="color-palette" size={20} color="#FF7043" />
-            <Text style={styles.infoText}>Color: {petDetails.color}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Icon name="male" size={20} color="#42A5F5" />
-            <Text style={styles.infoText}>Sexo: {petDetails.gender}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Icon name="medkit" size={20} color="#FF7043" />
-            <Text style={styles.infoText}>
-              Vacunado: {petDetails.vaccinated ? "Sí" : "No"}
+          {/* Ubicación */}
+          <View style={styles.locationContainer}>
+            <Icon name="location-outline" size={16} color="#FF6B81" />
+            <Text style={styles.locationText}>
+              {petDetails.location.region}, {petDetails.location.comuna}
             </Text>
           </View>
+        </View>
 
-          <Text style={styles.sectionTitle}>Historia de la mascota</Text>
-          <Text style={styles.petDescription}>{petDetails.description}</Text>
+        {/* Atributos adicionales */}
+        <View style={styles.attributesContainer}>
+          <View style={styles.attributeCard}>
+            <Text style={styles.attributeTitle}>Vacunado</Text>
+            <Text style={styles.attributeValue}>
+              {petDetails.vaccinated ? "Sí" : "No"}
+            </Text>
+          </View>
+          <View style={styles.attributeCard}>
+            <Text style={styles.attributeTitle}>Especie</Text>
+            <Text style={styles.attributeValue}>{petDetails.species}</Text>
+          </View>
+          <View style={styles.attributeCard}>
+            <Text style={styles.attributeTitle}>Color</Text>
+            <Text style={styles.attributeValue}>{petDetails.color}</Text>
+          </View>
+        </View>
 
-          <View style={styles.buttonContainer}>
+        {/* Descripción */}
+        <View style={styles.aboutContainer}>
+          <Text style={styles.aboutTitle}>Descripción de la mascota</Text>
+          <Text style={styles.petDescription}>
+            {petDetails.description}{" "}
+            <Text style={styles.readMore}>Leer más</Text>
+          </Text>
+        </View>
+
+        {/* Sección de contacto */}
+        <View style={styles.contactContainer}>
+          <Image
+            source={{ uri: "https://example.com/organization-avatar.jpg" }} // Reemplaza con la URL de la imagen de la organización
+            style={styles.contactAvatar}
+          />
+          <Text style={styles.contactName}>
+            Organización: Refugio de Mascotas
+          </Text>
+          <View style={styles.contactButtons}>
             <TouchableOpacity
-              style={styles.favoriteButton}
-              onPress={handleToggleFavorite}
+              style={styles.contactButton}
+              onPress={handleContact}
             >
-              <Icon
-                name={isFavorite ? "heart" : "heart-outline"}
-                size={20}
-                color="#FFF"
-              />
-              <Text style={styles.buttonText}>
-                {isFavorite ? "Quitar de Favoritos" : "Marcar Favorito"}
-              </Text>
+              <FontAwesome name="phone" size={20} color="#FF6B81" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.adoptButton} onPress={handleAdopt}>
-              <Icon name="heart-outline" size={20} color="#FFF" />
-              <Text style={styles.buttonText}>Adoptar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.chatButton}>
-              <Icon name="chatbubbles" size={20} color="#FFF" />
-              <Text style={styles.buttonText}>Abrir Chat</Text>
+            <TouchableOpacity
+              style={styles.contactButton}
+              onPress={handleContact}
+            >
+              <FontAwesome name="envelope-o" size={20} color="#FF6B81" />
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Botón Adoptar */}
+        <TouchableOpacity style={styles.adoptButton} onPress={handleAdopt}>
+          <Text style={styles.adoptButtonText}>Adoptar Ahora</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#FFF",
-  },
-  imageContainer: {
-    position: "relative",
-  },
-  petImage: {
-    width: "100%",
-    height: 250,
-  },
-  backButton: {
-    position: "absolute",
-    top: 15,
-    left: 15,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 20,
-    padding: 5,
-  },
-  detailsContainer: {
-    padding: 20,
-  },
-  petName: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 15,
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  infoText: {
-    fontSize: 16,
-    marginLeft: 10,
-    color: "#555",
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 10,
-    color: "#333",
-  },
-  petDescription: {
-    fontSize: 16,
-    color: "#555",
-  },
-  map: {
-    width: "100%",
-    height: 200,
-    marginTop: 10,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-  favoriteButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FF7043",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  chatButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#42A5F5",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  adoptButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#4CAF50",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  buttonText: {
-    marginLeft: 10,
-    color: "#FFF",
-    fontSize: 16,
-  },
-  errorText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 18,
-    color: "red",
-  },
+  ...StyleSheet.flatten({
+    main: {
+      flex: 1,
+      backgroundColor: "#FFF",
+    },
+    container: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    imageContainer: {
+      position: "relative",
+    },
+    petImage: {
+      width: "100%",
+      height: 300,
+      borderRadius: 8,
+    },
+    backButton: {
+      position: "absolute",
+      top: 40,
+      left: 20,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      borderRadius: 20,
+      padding: 5,
+    },
+    favoriteButtonHeader: {
+      position: "absolute",
+      top: 40,
+      right: 60,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      borderRadius: 20,
+      padding: 5,
+    },
+    editButton: {
+      position: "absolute",
+      top: 40,
+      right: 20,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      borderRadius: 20,
+      padding: 5,
+    },
+    detailsContainer: {
+      padding: 20,
+      backgroundColor: "#FFFFFF",
+      marginTop: -40,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      elevation: 10,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    petName: {
+      fontSize: 24,
+      fontWeight: "bold",
+    },
+    petBreed: {
+      fontSize: 18,
+      color: "#888",
+    },
+    tagsContainer: {
+      flexDirection: "row",
+      marginTop: 10,
+    },
+    tag: {
+      backgroundColor: "#F8D7DA",
+      color: "#FF6B81",
+      padding: 5,
+      borderRadius: 5,
+      marginRight: 8,
+    },
+    locationContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 10,
+    },
+    locationText: {
+      marginLeft: 5,
+      color: "#777",
+    },
+    attributesContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginHorizontal: 20,
+      marginTop: 20,
+    },
+    attributeCard: {
+      alignItems: "center",
+      padding: 10,
+      backgroundColor: "#F8F9FA",
+      borderRadius: 10,
+      flex: 1,
+      marginHorizontal: 5,
+    },
+    attributeTitle: {
+      color: "#999",
+    },
+    attributeValue: {
+      fontWeight: "bold",
+      fontSize: 16,
+    },
+    aboutContainer: {
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+    },
+    aboutTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 5,
+    },
+    petDescription: {
+      fontSize: 16,
+      color: "#666",
+    },
+    readMore: {
+      color: "#FF6B81",
+      fontWeight: "bold",
+    },
+    contactContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      marginVertical: 20,
+    },
+    contactAvatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: 10,
+    },
+    contactName: {
+      fontSize: 16,
+      fontWeight: "bold",
+      flex: 1,
+    },
+    contactButtons: {
+      flexDirection: "row",
+    },
+    contactButton: {
+      marginHorizontal: 5,
+      padding: 10,
+      backgroundColor: "#FFF0F1",
+      borderRadius: 10,
+    },
+    adoptButton: {
+      backgroundColor: "#FF6B81",
+      padding: 15,
+      marginHorizontal: 20,
+      borderRadius: 25,
+      alignItems: "center",
+      marginBottom: 30,
+    },
+    adoptButtonText: {
+      color: "#FFFFFF",
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+    errorText: {
+      textAlign: "center",
+      marginTop: 20,
+      fontSize: 18,
+      color: "red",
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+    modalImage: {
+      width: "90%",
+      height: "70%",
+      borderRadius: 8,
+    },
+    closeModalButton: {
+      position: "absolute",
+      top: 40,
+      right: 20,
+      zIndex: 1,
+    },
+  }),
 });
 
 export default PetProfileScreen;

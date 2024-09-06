@@ -106,50 +106,34 @@ const ProfileScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back-outline" size={30} color={THEME.black} />
         </TouchableOpacity>
+        {isEditing ? (
+          <TouchableOpacity onPress={handleSave}>
+            <Icon name="checkmark-outline" size={30} color={THEME.primary} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleEdit}>
+            <Icon name="pencil-outline" size={30} color={THEME.primary} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={handleImagePicker}>
           <Image source={profileImage} style={styles.profileImage} />
-          {isEditing && (
-            <Icon
-              name="pencil-outline"
-              size={25}
-              color={THEME.primary}
-              style={styles.editIcon}
-            />
-          )}
         </TouchableOpacity>
         {isEditing ? (
           <TextInput
-            style={styles.profileName}
+            style={[styles.profileName, styles.inputSpacing]}
             value={name}
             onChangeText={setName}
             editable={isEditing}
           />
         ) : (
-          <Text style={styles.profileName}>{name}</Text>
+          <Text style={[styles.profileName, styles.inputSpacing]}>{name}</Text>
         )}
-        <Text style={styles.profileJob}>{displayUserType()}</Text>
-        {!isEditing ? (
-          <TouchableOpacity
-            style={[styles.button, styles.upgradeButton]}
-            onPress={handleEdit}
-          >
-            <Text style={[styles.buttonText, styles.upgradeButtonText]}>
-              Editar perfil
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={[styles.button, styles.upgradeButton]}
-            onPress={handleSave}
-          >
-            <Text style={[styles.buttonText, styles.upgradeButtonText]}>
-              Guardar Cambios
-            </Text>
-          </TouchableOpacity>
-        )}
+        <Text style={[styles.profileJob, styles.inputSpacing]}>
+          {displayUserType()}
+        </Text>
       </View>
 
       <View style={styles.inputContainer}>
@@ -198,6 +182,11 @@ const ProfileScreen = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Beneficios de Premium</Text>
+
+            {/* Precio centralizado */}
+            <Text style={styles.priceText}>$20 USD</Text>
+            <Text style={styles.monthText}>Monthly</Text>
+
             <Text style={styles.modalText}>• Publicar mascotas ilimitadas</Text>
             <Text style={styles.modalText}>
               • Permite múltiples fotos y videos por mascota.
@@ -239,6 +228,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   profileContainer: {
@@ -261,6 +251,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: THEME.black,
+  },
+  inputSpacing: {
+    marginVertical: 10,
   },
   profileJob: {
     fontSize: 16,
@@ -338,6 +331,20 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: THEME.primary,
     fontSize: 16,
+  },
+  priceText: {
+    fontSize: 50,
+    fontWeight: "bold",
+    color: THEME.primary,
+    textAlign: "center",
+    marginVertical: 20,
+  },
+  monthText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: THEME.primary,
+    textAlign: "center",
+    paddingBottom: 20,
   },
 });
 

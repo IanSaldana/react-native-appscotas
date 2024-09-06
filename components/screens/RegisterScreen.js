@@ -13,6 +13,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { UserContext } from "../context/UserContext"; // Importar el contexto
 
 const RegisterScreen = () => {
+  const [rut, setRut] = useState(""); // Estado para el nombre
   const [name, setName] = useState(""); // Estado para el nombre
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +33,7 @@ const RegisterScreen = () => {
     }
 
     // Registrar usuario con tipo, email, contraseña y nombre
-    registerUser(userType, email, password, name); // Asegurarse de pasar el nombre
+    registerUser(userType, email, password, name, rut); // Asegurarse de pasar el nombre
 
     Alert.alert(
       "Usuario Registrado",
@@ -49,7 +50,12 @@ const RegisterScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registrar</Text>
-
+      <TextInput
+        style={styles.input}
+        placeholder="Rut"
+        value={rut}
+        onChangeText={setRut}
+      />
       <TextInput
         style={styles.input}
         placeholder="Nombre"

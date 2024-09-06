@@ -17,15 +17,15 @@ import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Ionicons";
 import RNPickerSelect from "react-native-picker-select";
 import Slider from "@react-native-community/slider";
-import { petsInitial } from "../constants/data";
-import { UserContext } from "../context/UserContext"; // Importar el contexto
+import { PetsContext } from "../context/PetsContext"; // Importar el contexto de mascotas
+import { UserContext } from "../context/UserContext"; // Importar el contexto del usuario
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { currentUser } = useContext(UserContext); // Usar el contexto para obtener el usuario actual
-  const [pets, setPets] = useState(petsInitial);
+  const { pets } = useContext(PetsContext); // Obtener las mascotas del contexto
   const [searchText, setSearchText] = useState(""); // Estado para el texto de búsqueda
-  const [filteredPets, setFilteredPets] = useState(petsInitial); // Estado para las mascotas filtradas
+  const [filteredPets, setFilteredPets] = useState(pets); // Estado para las mascotas filtradas
 
   const [isModalVisible, setIsModalVisible] = useState(false); // Estado para el modal de filtros
   const [selectedSpecies, setSelectedSpecies] = useState(""); // Filtro por especie
@@ -33,9 +33,26 @@ const HomeScreen = () => {
   const [ageRange, setAgeRange] = useState([0, 10]); // Rango de edad
   const [isVaccinated, setIsVaccinated] = useState(null); // Filtro por vacunación
 
+  useEffect(() => {
+    // Filtrar mascotas cuando cambia la lista o los filtros
+    filterPets(
+      searchText,
+      selectedSpecies,
+      selectedColor,
+      ageRange,
+      isVaccinated
+    );
+  }, [
+    pets,
+    searchText,
+    selectedSpecies,
+    selectedColor,
+    ageRange,
+    isVaccinated,
+  ]);
+
   const handleSearch = (text) => {
     setSearchText(text);
-    filterPets(text, selectedSpecies, selectedColor, ageRange, isVaccinated);
   };
 
   const filterPets = (search, species, color, ageRange, vaccinated) => {
@@ -91,12 +108,27 @@ const HomeScreen = () => {
       <StatusBar translucent={false} />
       <View style={styles.container}>
         <View>
-          {/* Mostrar el nombre del usuario registrado */}
           <Text style={styles.headerName}>Bienvenido</Text>
-          <Text style={styles.subHeads}>{currentUser?.name || "Usuario"}</Text>
+          <View style={styles.premiumContainer}>
+            {currentUser?.isPremium && (
+              <Icon
+                name="paw-outline"
+                size={20}
+                color="#f1c232"
+                style={styles.pawIcon}
+              />
+            )}
+            <Text
+              style={[
+                styles.subHeads,
+                currentUser?.isPremium ? styles.premiumName : null,
+              ]}
+            >
+              {currentUser?.name || "Usuario"}
+            </Text>
+          </View>
         </View>
         <TouchableOpacity onPress={handleProfile}>
-          {/* Mostrar la foto del usuario registrado si está disponible */}
           <Image
             style={styles.profileImage}
             source={
@@ -131,7 +163,6 @@ const HomeScreen = () => {
         contentContainerStyle={styles.mascotasList}
         showsVerticalScrollIndicator={false}
       />
-      {/* Modal para filtros */}
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -169,6 +200,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: "100%",
   },
+  headerContainer: {
+    flexDirection: "column",
+  },
   headerName: {
     fontSize: 30,
     textAlign: "left",
@@ -176,12 +210,22 @@ const styles = StyleSheet.create({
     color: THEME.primary,
     opacity: 0.9,
   },
+  premiumContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  pawIcon: {
+    marginRight: 5,
+  },
   subHeads: {
     fontSize: 22,
     textAlign: "left",
     fontWeight: "bold",
     color: THEME.gray,
     opacity: 0.9,
+  },
+  premiumName: {
+    color: "#f1c232", // Color dorado para usuarios premium
   },
   profileImage: {
     height: 50,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,28 +12,39 @@ import {
   KeyboardAvoidingView,
   FlatList,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
 import RNPickerSelect from "react-native-picker-select";
 import { THEME } from "../constants";
-import { addPet } from "../constants/data";
+import { addPet, updatePet } from "../constants/data";
 
 const CreatePetScreen = () => {
-  const [name, setName] = useState("");
-  const [species, setSpecies] = useState("");
-  const [color, setColor] = useState("");
-  const [age, setAge] = useState("");
-  const [vaccinated, setVaccinated] = useState(false);
-  const [gender, setGender] = useState("");
-  const [description, setDescription] = useState("");
-  const [region, setRegion] = useState("");
-  const [comuna, setComuna] = useState("");
-  const [image, setImage] = useState(null);
-
   const navigation = useNavigation();
+  const route = useRoute();
+  const petToEdit = route.params?.petDetails;
 
-  const handleCreatePet = () => {
+  // Estados iniciales, considerando edición
+  const [name, setName] = useState(petToEdit?.name || "");
+  const [species, setSpecies] = useState(petToEdit?.species || "");
+  const [color, setColor] = useState(petToEdit?.color || "");
+  const [age, setAge] = useState(
+    petToEdit?.age ? petToEdit.age.toString() : ""
+  );
+  const [vaccinated, setVaccinated] = useState(petToEdit?.vaccinated || false);
+  const [gender, setGender] = useState(petToEdit?.gender || "");
+  const [description, setDescription] = useState(petToEdit?.description || "");
+  const [region, setRegion] = useState(petToEdit?.location?.region || "");
+  const [comuna, setComuna] = useState(petToEdit?.location?.comuna || "");
+  const [image, setImage] = useState(petToEdit?.image?.uri || null);
+
+  useEffect(() => {
+    if (petToEdit) {
+      console.log("Editando mascota existente", petToEdit);
+    }
+  }, [petToEdit]);
+
+  const handleCreateOrUpdatePet = () => {
     if (
       !name ||
       !species ||
@@ -48,8 +59,8 @@ const CreatePetScreen = () => {
       return;
     }
 
-    const newPet = {
-      id: Date.now().toString(),
+    const updatedPet = {
+      ...petToEdit,
       name,
       species,
       color,
@@ -61,9 +72,26 @@ const CreatePetScreen = () => {
       image: image ? { uri: image } : null,
     };
 
-    addPet(newPet);
+    if (petToEdit) {
+      // Actualizar mascota existente
+      updatePet(updatedPet);
+      Alert.alert(
+        "Actualización",
+        "La publicación se ha actualizado con éxito."
+      );
+    } else {
+      // Crear nueva mascota
+      updatedPet.id = Date.now().toString();
+      addPet(updatedPet);
+      Alert.alert("Creación de mascota", "Publicación creada con éxito.");
+    }
 
-    // Limpiar el formulario después de crear
+    // Limpiar el formulario y navegar
+    resetForm();
+    navigation.navigate("Inicio");
+  };
+
+  const resetForm = () => {
     setName("");
     setSpecies("");
     setColor("");
@@ -74,9 +102,6 @@ const CreatePetScreen = () => {
     setRegion("");
     setComuna("");
     setImage(null);
-
-    Alert.alert("Creación de mascota", "Publicación creada con éxito.");
-    navigation.navigate("Inicio");
   };
 
   const handleChoosePhoto = async () => {
@@ -246,9 +271,11 @@ const CreatePetScreen = () => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.createBtn}
-          onPress={handleCreatePet}
+          onPress={handleCreateOrUpdatePet}
         >
-          <Text style={styles.createText}>Crear publicación</Text>
+          <Text style={styles.createText}>
+            {petToEdit ? "Actualizar publicación" : "Crear publicación"}
+          </Text>
         </TouchableOpacity>
       ),
     },
@@ -270,7 +297,9 @@ const CreatePetScreen = () => {
           keyExtractor={(item) => item.key}
           style={{ padding: 20 }}
           ListHeaderComponent={() => (
-            <Text style={styles.headerName}>Crear publicación</Text>
+            <Text style={styles.headerName}>
+              {petToEdit ? "Editar publicación" : "Crear publicación"}
+            </Text>
           )}
         />
       </SafeAreaView>

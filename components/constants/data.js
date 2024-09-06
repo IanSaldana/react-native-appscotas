@@ -11,116 +11,6 @@ export const petsInitial = [
     description: "Perro amigable y juguetón.",
     image: require("../../assets/images/mascota1.jpeg"),
   },
-  {
-    id: "2",
-    name: "Max",
-    species: "dog",
-    color: "black",
-    age: 5,
-    vaccinated: false,
-    description: "Perro enérgico y activo.",
-    image: require("../../assets/images/mascota2.jpeg"),
-  },
-  {
-    id: "3",
-    name: "Misty",
-    species: "cat",
-    color: "yellow",
-    age: 7,
-    vaccinated: true,
-    description: "Gatita muy tierna y cariñosa.",
-    image: require("../../assets/images/mascota3.jpeg"),
-  },
-  {
-    id: "4",
-    name: "Luna",
-    species: "cat",
-    color: "gray",
-    age: 2,
-    vaccinated: true,
-    description: "Gata juguetona que ama los ratones de juguete.",
-    image: require("../../assets/images/mascota4.jpeg"),
-  },
-  {
-    id: "5",
-    name: "Charlie",
-    species: "dog",
-    color: "white",
-    age: 1,
-    vaccinated: false,
-    description: "Cachorro curioso y lleno de energía.",
-    image: require("../../assets/images/mascota5.jpeg"),
-  },
-  {
-    id: "6",
-    name: "Simba",
-    species: "cat",
-    color: "orange",
-    age: 4,
-    vaccinated: true,
-    description: "Gato tranquilo y amante de las siestas.",
-    image: require("../../assets/images/mascota6.jpeg"),
-  },
-  {
-    id: "7",
-    name: "Rocky",
-    species: "dog",
-    color: "gray",
-    age: 6,
-    vaccinated: true,
-    description: "Perro protector y fiel.",
-    image: require("../../assets/images/mascota7.jpeg"),
-  },
-  {
-    id: "8",
-    name: "Nina",
-    species: "cat",
-    color: "black",
-    age: 3,
-    vaccinated: false,
-    description: "Gata independiente pero muy cariñosa.",
-    image: require("../../assets/images/mascota8.jpeg"),
-  },
-  {
-    id: "9",
-    name: "Bella",
-    species: "dog",
-    color: "golden",
-    age: 5,
-    vaccinated: true,
-    description: "Perra dulce que ama los paseos largos.",
-    image: require("../../assets/images/mascota9.jpeg"),
-  },
-  {
-    id: "10",
-    name: "Chloe",
-    species: "cat",
-    color: "white",
-    age: 4,
-    vaccinated: true,
-    description: "Gatita curiosa que disfruta explorar.",
-    image: require("../../assets/images/mascota10.jpeg"),
-  },
-  {
-    id: "11",
-    name: "Cooper",
-    species: "dog",
-    color: "brown",
-    age: 8,
-    vaccinated: false,
-    description: "Perro calmado y amable, perfecto para compañía.",
-    image: require("../../assets/images/mascota11.jpeg"),
-  },
-  {
-    id: "12",
-    name: "Milo",
-    species: "cat",
-    color: "brown",
-    age: 2,
-    vaccinated: true,
-    description: "Gatito juguetón y travieso.",
-    image: require("../../assets/images/mascota12.jpeg"),
-  },
 ];
 // Función para agregar una nueva mascota a la lista
 export const addPet = (pet) => {
@@ -129,4 +19,11 @@ export const addPet = (pet) => {
     ...pet,
   };
   petsInitial.push(newPet);
+};
+// Función para actualizar una mascota existente
+export const updatePet = (updatedPet) => {
+  const index = petsInitial.findIndex((pet) => pet.id === updatedPet.id);
+  if (index !== -1) {
+    petsInitial[index] = { ...updatedPet };
+  }
 };
