@@ -13,6 +13,7 @@ import PetProfileScreen from "../screens/PetProfileScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoadingScreen from "../screens/LoadingScreen";
 import AdoptScreen from "../screens/AdoptScreen";
+import ParticularNotificationScreen from "../screens/ParticularNotificationScreen";
 
 //screens names
 const loginName = "Login";
@@ -29,6 +30,8 @@ const chatListName = "ChatList";
 const chatName = "Chat";
 
 const adoptName = "Adopt";
+
+const notificationName = "Notification";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,6 +58,11 @@ export default function Navigation() {
         <Stack.Screen name={chatListName} component={ChatListScreen} />
         <Stack.Screen name={chatName} component={ChatScreen} />
         <Stack.Screen name={adoptName} component={AdoptScreen} />
+
+        <Stack.Screen
+          name={notificationName}
+          component={ParticularNotificationScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

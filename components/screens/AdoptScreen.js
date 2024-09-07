@@ -12,10 +12,12 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
 import { UserContext } from "../context/UserContext"; // Importa el contexto del usuario
+import { NotificationContext } from "../context/NotificationContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 const AdoptScreen = () => {
   const { currentUser } = useContext(UserContext); // Obtener el usuario actual del contexto
+  const { addNotification } = useContext(NotificationContext); // Obtener la función de agregar notificación del contexto
   const navigation = useNavigation();
   const route = useRoute();
   const { petDetails } = route.params; // Recibir los detalles de la mascota
@@ -24,11 +26,24 @@ const AdoptScreen = () => {
   const [adopterStory, setAdopterStory] = useState(""); // Estado para la historia del adoptante
 
   const handleSendNow = () => {
-    // Aquí va la lógica para manejar el envío de la solicitud de adopción
     console.log("Nombre del adoptante:", userName);
     console.log("Historia del adoptante:", adopterStory);
     alert("¡Solicitud de adopción enviada!");
-    // Puedes agregar aquí el código para enviar los datos a un backend o servicio
+
+    // Agregar notificación con detalles de la mascota
+    addNotification({
+      id: new Date().getTime(),
+      title: `Solicitud de adopción: ${petDetails.name}`, // Incluye el nombre de la mascota
+      body: "Tu solicitud de adopción ha sido enviada y está por revisar.",
+      status: "Por revisar",
+      date: new Date().toLocaleString(),
+      petDetails: petDetails, // Incluye los detalles completos de la mascota
+      history: [
+        { date: new Date().toLocaleString(), text: "Solicitud enviada" },
+      ],
+    });
+
+    navigation.goBack();
   };
 
   return (
@@ -91,7 +106,7 @@ const AdoptScreen = () => {
 
         {/* Botón de Enviar */}
         <TouchableOpacity style={styles.sendButton} onPress={handleSendNow}>
-          <Text style={styles.sendButtonText}>Send Now</Text>
+          <Text style={styles.sendButtonText}>Solicitar Adopción</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -197,11 +212,13 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.grayLight,
   },
   sendButton: {
-    backgroundColor: THEME.danger,
-    padding: 15,
-    borderRadius: 25,
+    textAlign: "center",
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    width: "100%",
+    height: 55,
+    backgroundColor: THEME.primary,
+    borderRadius: 40,
   },
   sendButtonText: {
     color: THEME.white,

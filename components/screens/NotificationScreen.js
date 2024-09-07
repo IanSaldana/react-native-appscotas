@@ -1,61 +1,51 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
+  TouchableOpacity,
   FlatList,
   StyleSheet,
   SafeAreaView,
+  StatusBar,
   Image,
-  TouchableOpacity,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
-import { StatusBar } from "expo-status-bar";
-
-const notifications = [
-  {
-    id: "1",
-    title: "Mascota Encontrada",
-    message: "¡Buena noticia! Tu mascota perdida ha sido encontrada.",
-    time: "hace 2 horas",
-    image: require("../../assets/images/mascota1.jpeg"), // Asegúrate de que esta imagen existe
-  },
-  {
-    id: "2",
-    title: "Nueva Solicitud de Adopción",
-    message: "Tienes una nueva solicitud de adopción para tu mascota.",
-    time: "hace 1 día",
-    image: require("../../assets/images/mascota2.jpeg"), // Asegúrate de que esta imagen existe
-  },
-  {
-    id: "3",
-    title: "Vacunación Programada",
-    message:
-      "Recuerda, la vacunación de tu mascota está programada para mañana.",
-    time: "hace 3 días",
-    image: require("../../assets/images/mascota3.jpeg"), // Asegúrate de que esta imagen existe
-  },
-  {
-    id: "4",
-    title: "Proceso de Adopción Completo",
-    message: "¡Felicidades! La adopción de tu mascota ha sido finalizada.",
-    time: "hace 5 días",
-    image: require("../../assets/images/mascota4.jpeg"), // Asegúrate de que esta imagen existe
-  },
-];
+import { NotificationContext } from "../context/NotificationContext"; // Importa el contexto de notificaciones
 
 const NotificationScreen = () => {
+  const navigation = useNavigation();
+  const { notifications } = useContext(NotificationContext); // Obtener las notificaciones del contexto
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.notificationItem}>
-      <Image source={item.image} style={styles.profileImage} />
-      <View style={styles.textContainer}>
-        <Text style={styles.message}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.message}>{item.message}</Text>
-          <Text style={styles.time}>{item.time}</Text>
-          {item.action}
-        </Text>
-        <Text style={styles.time}>{item.time}</Text>
+    <TouchableOpacity
+      style={styles.itemContainer}
+      onPress={() =>
+        navigation.navigate("Notification", {
+          notificationId: item.id,
+        })
+      }
+    >
+      {/* Mostrar la imagen de la mascota */}
+      <Image
+        source={
+          item.petDetails?.image
+            ? { uri: item.petDetails.image.uri }
+            : require("../../assets/images/mascota1.jpeg")
+        } // Utiliza una imagen predeterminada si no hay imagen
+        style={styles.petImage}
+      />
+      <View style={styles.notificationContent}>
+        {/* Mostrar el título de la notificación que incluye el nombre de la mascota */}
+        <Text style={styles.notificationTitle}>{item.title}</Text>
+        <Text style={styles.notificationBody}>{item.body}</Text>
+        <View style={styles.notificationFooter}>
+          <Text style={styles.notificationDate}>{item.date}</Text>
+          <Text style={styles.notificationStatus}>{item.status}</Text>
+        </View>
       </View>
+      <Icon name="chevron-forward" size={20} color={THEME.primary} />
     </TouchableOpacity>
   );
 
@@ -63,15 +53,17 @@ const NotificationScreen = () => {
     <SafeAreaView style={styles.main}>
       <StatusBar translucent={false} />
       <View style={styles.container}>
-        <Text style={styles.header}>Notificaciones</Text>
+        <View>
+          <Text style={styles.headerTitle}>Notificaciones</Text>
+        </View>
+        <FlatList
+          data={notifications} // Usa los datos de notificaciones del contexto
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
-      <FlatList
-        data={notifications}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-      />
     </SafeAreaView>
   );
 };
@@ -87,80 +79,59 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: "100%",
   },
-  header: {
+  headerTitle: {
     fontSize: 30,
     textAlign: "left",
     fontWeight: "bold",
     color: THEME.primary,
     opacity: 0.9,
   },
-  tabContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
+  listContainer: {
+    paddingBottom: 20,
   },
-  tabButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "#242526",
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  tabButtonActive: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "#3A3B3C",
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  tabButtonText: {
-    color: "#E4E6EB",
-  },
-  tabButtonTextActive: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-  },
-  list: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  notificationItem: {
+  itemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "#fcfcfc",
+    marginBottom: 20,
     borderRadius: 10,
-    marginVertical: 5,
+    overflow: "hidden",
+    backgroundColor: "#FFF",
+    borderColor: "#E0E0E0",
+    borderWidth: 1,
+    padding: 15,
   },
-  profileImage: {
+  petImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 10,
+    marginRight: 15,
   },
-  textContainer: {
+  notificationContent: {
     flex: 1,
   },
-  title: {
-    color: "#35253b",
-    fontSize: 16,
+  notificationTitle: {
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
   },
-  message: {
-    color: "#2f3030",
+  notificationBody: {
     fontSize: 14,
+    color: "#666",
+    marginVertical: 5,
   },
-  time: {
-    color: "#B0B3B8",
+  notificationFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 5,
+  },
+  notificationDate: {
     fontSize: 12,
-    marginTop: 2,
+    color: "#999",
   },
-  unreadIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#2D88FF",
-    marginLeft: 10,
+  notificationStatus: {
+    fontSize: 14,
+    color: THEME.primary,
+    fontWeight: "bold",
   },
 });
 

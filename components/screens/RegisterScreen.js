@@ -18,7 +18,9 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { userType, registerUser } = useContext(UserContext); // Usar el contexto
+  const [selectedUserType, setSelectedUserType] = useState(""); // Nuevo estado para manejar el tipo de usuario
+
+  const { registerUser } = useContext(UserContext); // Usar el contexto
   const navigation = useNavigation();
 
   const handleRegister = () => {
@@ -27,17 +29,17 @@ const RegisterScreen = () => {
       return;
     }
 
-    if (!name || !email) {
+    if (!name || !email || !selectedUserType) {
       Alert.alert("Error", "Todos los campos son obligatorios.");
       return;
     }
 
-    // Registrar usuario con tipo, email, contraseña y nombre
-    registerUser(userType, email, password, name, rut); // Asegurarse de pasar el nombre
+    // Registrar usuario con tipo, email, contraseña, nombre y rut
+    registerUser(selectedUserType, email, password, name, rut); // Asegurarse de pasar el nombre y el tipo de usuario
 
     Alert.alert(
       "Usuario Registrado",
-      "El usuario ha sido registrado con éxito como " + userType,
+      "El usuario ha sido registrado con éxito como " + selectedUserType,
       [
         {
           text: "OK",
@@ -50,12 +52,6 @@ const RegisterScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registrar</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Rut"
-        value={rut}
-        onChangeText={setRut}
-      />
       <TextInput
         style={styles.input}
         placeholder="Nombre"
@@ -85,7 +81,7 @@ const RegisterScreen = () => {
         secureTextEntry
       />
       <RNPickerSelect
-        onValueChange={(value) => registerUser(value)} // Actualiza el tipo de usuario
+        onValueChange={(value) => setSelectedUserType(value)} // Actualiza solo el estado local
         items={[
           { label: "Persona", value: "persona" },
           { label: "Organización", value: "organizacion" },

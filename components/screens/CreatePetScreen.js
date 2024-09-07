@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -17,12 +17,23 @@ import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
 import RNPickerSelect from "react-native-picker-select";
 import { THEME } from "../constants";
-import { addPet, updatePet } from "../constants/data";
+import { PetsContext } from "../context/PetsContext"; // Importa el contexto de mascotas
+import { UserContext } from "../context/UserContext"; // Importa el contexto de usuario
 
 const CreatePetScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const petToEdit = route.params?.petDetails;
+
+  const { addPet, updatePet } = useContext(PetsContext); // Obtén las funciones del contexto de mascotas
+  const { currentUser } = useContext(UserContext); // Obtén el usuario actual desde el contexto de usuario
+
+  // Verificación de que currentUser está definido
+  if (!currentUser) {
+    console.error("Error: El usuario actual no está definido.");
+    Alert.alert("Error", "El usuario actual no está definido.");
+    return null; // No se renderiza nada si no hay usuario actual
+  }
 
   // Estados iniciales, considerando edición
   const [name, setName] = useState(petToEdit?.name || "");
@@ -70,23 +81,20 @@ const CreatePetScreen = () => {
       location: { region, comuna },
       description,
       image: image ? { uri: image } : null,
+      organizationId: currentUser.organizationId, // Utiliza el organizationId del usuario actual
     };
 
     if (petToEdit) {
-      // Actualizar mascota existente
       updatePet(updatedPet);
       Alert.alert(
         "Actualización",
         "La publicación se ha actualizado con éxito."
       );
     } else {
-      // Crear nueva mascota
-      updatedPet.id = Date.now().toString();
       addPet(updatedPet);
       Alert.alert("Creación de mascota", "Publicación creada con éxito.");
     }
 
-    // Limpiar el formulario y navegar
     resetForm();
     navigation.navigate("Inicio");
   };
@@ -115,6 +123,8 @@ const CreatePetScreen = () => {
     const result = await ImagePicker.launchImageLibraryAsync();
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+    } else {
+      console.log("Selección de imagen cancelada.");
     }
   };
 
@@ -160,6 +170,7 @@ const CreatePetScreen = () => {
             ]}
             placeholder={{ label: "Seleccione la especie", value: null }}
             style={pickerSelectStyles}
+            value={species} // Asegúrate de que el valor se mantenga sincronizado
           />
         </>
       ),
@@ -218,6 +229,7 @@ const CreatePetScreen = () => {
             ]}
             placeholder={{ label: "Seleccione el género", value: null }}
             style={pickerSelectStyles}
+            value={gender} // Asegúrate de que el valor se mantenga sincronizado
           />
         </>
       ),

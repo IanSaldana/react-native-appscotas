@@ -12,87 +12,76 @@ import {
   FlatList,
 } from "react-native";
 import { THEME } from "../constants";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Ionicons";
-import RNPickerSelect from "react-native-picker-select";
-import Slider from "@react-native-community/slider";
-import { PetsContext } from "../context/PetsContext"; // Importar el contexto de mascotas
-import { UserContext } from "../context/UserContext"; // Importar el contexto del usuario
+import { PetsContext } from "../context/PetsContext";
+import { UserContext } from "../context/UserContext";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const { currentUser } = useContext(UserContext); // Usar el contexto para obtener el usuario actual
-  const { pets } = useContext(PetsContext); // Obtener las mascotas del contexto
-  const [searchText, setSearchText] = useState(""); // Estado para el texto de búsqueda
-  const [filteredPets, setFilteredPets] = useState(pets); // Estado para las mascotas filtradas
+  const { currentUser } = useContext(UserContext);
+  const { pets, loadPets } = useContext(PetsContext);
+  const [searchText, setSearchText] = useState("");
+  const [filteredPets, setFilteredPets] = useState(pets);
 
-  const [isModalVisible, setIsModalVisible] = useState(false); // Estado para el modal de filtros
-  const [selectedSpecies, setSelectedSpecies] = useState(""); // Filtro por especie
-  const [selectedColor, setSelectedColor] = useState(""); // Filtro por color
-  const [ageRange, setAgeRange] = useState([0, 10]); // Rango de edad
-  const [isVaccinated, setIsVaccinated] = useState(null); // Filtro por vacunación
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedSpecies, setSelectedSpecies] = useState("");
+  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedAge, setSelectedAge] = useState("Any"); // Estado para el filtro de edad
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPets();
+      filterPets(searchText, selectedSpecies, selectedGender, selectedAge);
+    }, [searchText, selectedSpecies, selectedGender, selectedAge])
+  );
 
   useEffect(() => {
-    // Filtrar mascotas cuando cambia la lista o los filtros
-    filterPets(
-      searchText,
-      selectedSpecies,
-      selectedColor,
-      ageRange,
-      isVaccinated
-    );
-  }, [
-    pets,
-    searchText,
-    selectedSpecies,
-    selectedColor,
-    ageRange,
-    isVaccinated,
-  ]);
+    filterPets(searchText, selectedSpecies, selectedGender, selectedAge);
+  }, [pets]);
 
   const handleSearch = (text) => {
     setSearchText(text);
   };
 
-  const filterPets = (search, species, color, ageRange, vaccinated) => {
+  const filterPets = (search, species, gender, age) => {
     let filtered = pets.filter((pet) => {
       const matchName = pet.name.toLowerCase().includes(search.toLowerCase());
       const matchSpecies = species ? pet.species === species : true;
-      const matchColor = color ? pet.color === color : true;
-      const matchAge = pet.age >= ageRange[0] && pet.age <= ageRange[1];
-      const matchVaccinated =
-        vaccinated !== null ? pet.vaccinated === vaccinated : true;
-      return (
-        matchName && matchSpecies && matchColor && matchAge && matchVaccinated
-      );
+      const matchGender = gender ? pet.gender === gender : true;
+      const matchAge =
+        age === "Any"
+          ? true
+          : age === "2 años"
+          ? pet.age <= 2
+          : age === "5 años"
+          ? pet.age <= 5
+          : pet.age >= 8;
+
+      return matchName && matchSpecies && matchGender && matchAge;
     });
     setFilteredPets(filtered);
   };
 
   const applyFilters = () => {
-    filterPets(
-      searchText,
-      selectedSpecies,
-      selectedColor,
-      ageRange,
-      isVaccinated
-    );
+    filterPets(searchText, selectedSpecies, selectedGender, selectedAge);
     setIsModalVisible(false);
   };
 
-  const handleProfile = () => {
-    navigation.navigate("Profile");
-  };
-
-  const handlePetPress = (petId) => {
-    navigation.navigate("PetProfile", { petId });
+  const resetFilters = () => {
+    setSelectedSpecies("");
+    setSelectedGender("");
+    setSelectedAge("Any");
+    setSearchText("");
+    filterPets("", "", "", "Any");
+    setIsModalVisible(false);
   };
 
   const renderMascota = ({ item }) => (
     <TouchableOpacity
       style={styles.mascotaItem}
-      onPress={() => handlePetPress(item.id)}
+      onPress={() => navigation.navigate("PetProfile", { petId: item.id })}
     >
       <Image source={item.image} style={styles.mascotaImage} />
       <View style={styles.mascotaDetailsContainer}>
@@ -128,7 +117,7 @@ const HomeScreen = () => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity onPress={handleProfile}>
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
           <Image
             style={styles.profileImage}
             source={
@@ -143,7 +132,7 @@ const HomeScreen = () => {
         <View style={styles.searchInputContainer}>
           <Icon name="search" size={25} color={THEME.gray} />
           <TextInput
-            placeholder="Busca tu mascota "
+            placeholder="Busca tu mascota"
             value={searchText}
             onChangeText={handleSearch}
             style={{ flex: 1 }}
@@ -172,14 +161,89 @@ const HomeScreen = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Filtrar mascotas</Text>
-            {/* Filtros de especie, color, etc. */}
-            {/* ... */}
+            {/* Filtros de Especie */}
+            <Text style={styles.filterLabel}>Especie:</Text>
+            <View style={styles.vaccinatedFilter}>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedSpecies === "Perro" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedSpecies("Perro")}
+              >
+                <Text style={styles.optionText}>Perros</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedSpecies === "Gato" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedSpecies("Gato")}
+              >
+                <Text style={styles.optionText}>Gatos</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Filtros de Género */}
+            <Text style={styles.filterLabel}>Género:</Text>
+            <View style={styles.vaccinatedFilter}>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedGender === "Macho" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedGender("Macho")}
+              >
+                <Text style={styles.optionText}>Macho</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedGender === "Hembra" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedGender("Hembra")}
+              >
+                <Text style={styles.optionText}>Hembra</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Filtros de Edad */}
+            <Text style={styles.filterLabel}>Edad:</Text>
+            <View style={styles.vaccinatedFilter}>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedAge === "2 años" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedAge("2 años")}
+              >
+                <Text style={styles.optionText}>2 años</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedAge === "5 años" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedAge("5 años")}
+              >
+                <Text style={styles.optionText}>5 años</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.vaccinatedOption,
+                  selectedAge === "8+ años" && styles.selectedOption,
+                ]}
+                onPress={() => setSelectedAge("8+ años")}
+              >
+                <Text style={styles.optionText}>8+ años</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Botones de Modal */}
             <View style={styles.modalButtons}>
-              <Button title="Aplicar Filtros" onPress={applyFilters} />
-              <Button
-                title="Cancelar"
-                onPress={() => setIsModalVisible(false)}
-              />
+              <TouchableOpacity style={styles.applyBtn} onPress={applyFilters}>
+                <Text style={styles.applyBtnText}>Aplicar Filtros</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.clearBtn} onPress={resetFilters}>
+                <Text style={styles.clearBtnText}>Limpiar Filtros</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -187,7 +251,6 @@ const HomeScreen = () => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   main: {
     flex: 1,
@@ -341,29 +404,71 @@ const styles = StyleSheet.create({
   mr7: {
     marginRight: 7,
   },
-});
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    color: "black",
-    paddingRight: 30,
-    marginBottom: 15,
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  inputAndroid: {
+  modalContent: {
+    width: 300,
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  filterLabel: {
     fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: "#ccc",
+    marginBottom: 10,
+  },
+  vaccinatedFilter: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  vaccinatedOption: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: THEME.grayLight,
+  },
+  selectedOption: {
+    backgroundColor: THEME.primary,
+  },
+  optionText: {
+    color: THEME.white,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  applyBtn: {
+    flex: 1,
+    backgroundColor: THEME.primary,
+    paddingVertical: 10,
+    alignItems: "center",
     borderRadius: 8,
-    color: "black",
-    paddingRight: 30,
-    marginBottom: 15,
+    marginRight: 5,
+  },
+  applyBtnText: {
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  clearBtn: {
+    flex: 1,
+    backgroundColor: THEME.gray,
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  clearBtnText: {
+    color: "#FFF",
+    fontWeight: "bold",
   },
 });
+
 export default HomeScreen;

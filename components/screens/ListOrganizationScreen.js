@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,10 +13,23 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
 import { UserContext } from "../context/UserContext"; // Importar el contexto de usuario
+import { PetsContext } from "../context/PetsContext"; // Importar el contexto de mascotas
 
 const ListOrganizationScreen = () => {
   const navigation = useNavigation();
-  const { pets } = useContext(UserContext); // Obtener la lista de mascotas del contexto de usuario
+  const { currentUser } = useContext(UserContext); // Obtener la información del usuario actual
+  const { pets } = useContext(PetsContext); // Obtener la lista de mascotas del contexto de mascotas
+  const [organizationPets, setOrganizationPets] = useState([]);
+
+  useEffect(() => {
+    // Filtrar mascotas por la organización del usuario actual
+    if (currentUser && currentUser.organizationId) {
+      const filteredPets = pets.filter(
+        (pet) => pet.organizationId === currentUser.organizationId
+      );
+      setOrganizationPets(filteredPets);
+    }
+  }, [pets, currentUser]);
 
   // Función para renderizar cada mascota
   const renderItem = ({ item }) => (
@@ -36,9 +49,11 @@ const ListOrganizationScreen = () => {
     <SafeAreaView style={styles.main}>
       <StatusBar translucent={false} />
       <View style={styles.container}>
-        <Text style={styles.headerTitle}>Lista Organizacion</Text>
+        <Text style={styles.headerTitle}>
+          Lista de Mascotas de la Organización
+        </Text>
         <FlatList
-          data={pets} // Usa los datos de mascotas del contexto de usuario
+          data={organizationPets} // Usa los datos filtrados de mascotas
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}

@@ -7,21 +7,27 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [userType, setUserType] = useState("persona");
   const [registeredUsers, setRegisteredUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null); // Estado de usuario actual
   const [pets, setPets] = useState([]); // Estado para almacenar la lista de mascotas
 
   // Función para registrar un usuario
-  const registerUser = (type, email, password, name) => {
+  const registerUser = (type, email, password, name, rut) => {
     const newUser = {
       type,
       email,
       password,
       name,
+      rut,
       photo: null,
       isPremium: false,
+      organizationId: type === "organizacion" ? Date.now().toString() : null, // Asigna un ID único si el tipo es organización
     };
+
     setUserType(type);
     setRegisteredUsers((prevUsers) => [...prevUsers, newUser]);
+
+    // Si el usuario es el que acaba de registrarse, actualiza currentUser
+    setCurrentUser(newUser);
   };
 
   // Función para verificar si un usuario existe
@@ -63,7 +69,7 @@ export const UserProvider = ({ children }) => {
         checkUserExists,
         updateUser,
         logout,
-        currentUser,
+        currentUser, // Asegúrate de que `currentUser` esté disponible en el proveedor
         pets,
         addPet,
       }}

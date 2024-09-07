@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -12,16 +12,18 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useFavorites } from "../context/FavouriteContext";
-import { petsInitial } from "../constants/data";
+import { PetsContext } from "../context/PetsContext"; // Importa el contexto de mascotas
+import { UserContext } from "../context/UserContext"; // Importa el contexto de usuario
 import { THEME } from "../constants";
 
 const PetProfileScreen = ({ route, navigation }) => {
   const { petId } = route.params;
+  const { pets } = useContext(PetsContext); // Obtén la lista de mascotas desde el contexto
+  const { registeredUsers } = useContext(UserContext); // Obtén la lista de usuarios registrados
   const { favorites, toggleFavorite } = useFavorites();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const petDetails = petsInitial.find((pet) => pet.id === petId);
-  const isOrganization = true; // Cambiar esta lógica según el estado de la organización
+  const petDetails = pets.find((pet) => pet.id === petId); // Busca la mascota en la lista del contexto
 
   if (!petDetails) {
     return (
@@ -30,6 +32,15 @@ const PetProfileScreen = ({ route, navigation }) => {
       </SafeAreaView>
     );
   }
+
+  // Obtener el nombre de la organización que creó la mascota
+  const organization = registeredUsers?.find(
+    (user) => user.organizationId === petDetails.organizationId
+  );
+
+  const organizationName = organization
+    ? organization.name
+    : "Organización desconocida";
 
   const isFavorite = favorites.some((fav) => fav.id === petDetails.id);
   const handleToggleFavorite = () => {
@@ -41,7 +52,10 @@ const PetProfileScreen = ({ route, navigation }) => {
   };
 
   const handleContact = () => {
-    console.log("Contactar con la organización");
+    navigation.navigate("Chat", {
+      userId: organization?.id, // Puedes pasar el ID de la organización o usuario
+      userName: organizationName, // Pasamos el nombre de la organización
+    });
   };
 
   const handleEditPet = () => {
@@ -80,7 +94,7 @@ const PetProfileScreen = ({ route, navigation }) => {
               color="white"
             />
           </TouchableOpacity>
-          {isOrganization && (
+          {organization && organization.type === "organización" && (
             <TouchableOpacity style={styles.editButton} onPress={handleEditPet}>
               <FontAwesome name="edit" size={25} color="white" />
             </TouchableOpacity>
@@ -145,33 +159,24 @@ const PetProfileScreen = ({ route, navigation }) => {
         {/* Descripción */}
         <View style={styles.aboutContainer}>
           <Text style={styles.aboutTitle}>Descripción de la mascota</Text>
-          <Text style={styles.petDescription}>
-            {petDetails.description}{" "}
-            <Text style={styles.readMore}>Leer más</Text>
-          </Text>
+          <Text style={styles.petDescription}>{petDetails.description} </Text>
         </View>
 
         {/* Sección de contacto */}
         <View style={styles.contactContainer}>
           <Image
-            source={{ uri: "https://example.com/organization-avatar.jpg" }} // Reemplaza con la URL de la imagen de la organización
+            source={require("../../assets/images/organizacion.jpeg")} // Reemplaza con la URL de la imagen de la organización
             style={styles.contactAvatar}
           />
           <Text style={styles.contactName}>
-            Organización: Refugio de Mascotas
+            Organización: {organizationName}
           </Text>
           <View style={styles.contactButtons}>
             <TouchableOpacity
               style={styles.contactButton}
               onPress={handleContact}
             >
-              <FontAwesome name="phone" size={20} color="#FF6B81" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.contactButton}
-              onPress={handleContact}
-            >
-              <FontAwesome name="envelope-o" size={20} color="#FF6B81" />
+              <FontAwesome name="comments" size={20} color="#FF6B81" />
             </TouchableOpacity>
           </View>
         </View>
@@ -332,12 +337,13 @@ const styles = StyleSheet.create({
       borderRadius: 10,
     },
     adoptButton: {
-      backgroundColor: "#FF6B81",
-      padding: 15,
-      marginHorizontal: 20,
-      borderRadius: 25,
+      textAlign: "center",
+      justifyContent: "center",
       alignItems: "center",
-      marginBottom: 30,
+      width: "100%",
+      height: 55,
+      backgroundColor: THEME.primary,
+      borderRadius: 40,
     },
     adoptButtonText: {
       color: "#FFFFFF",
