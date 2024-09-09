@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,37 +13,19 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
-
-const chatList = [
-  {
-    id: "1",
-    name: "Organizacion 1",
-    lastMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit....",
-    avatar: require("../../assets/images/person.jpeg"),
-    time: "10:20",
-    unreadCount: 2,
-  },
-  {
-    id: "2",
-    name: "Organizacion 2",
-    lastMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit....",
-    avatar: require("../../assets/images/person.jpeg"),
-    time: "10:15",
-    unreadCount: 0,
-  },
-  {
-    id: "3",
-    name: "Organizacion 3",
-    lastMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit....",
-    avatar: require("../../assets/images/person.jpeg"),
-    time: "09:00",
-    unreadCount: 1,
-  },
-];
+import { UserContext } from "../context/UserContext"; // Importa el contexto de usuario
 
 const ChatListScreen = () => {
+  const { currentUser, getFilteredConversations } = useContext(UserContext); // Obtener el usuario actual y la función para obtener conversaciones filtradas
   const [searchText, setSearchText] = useState("");
   const navigation = useNavigation();
+
+  // Obtener conversaciones filtradas basadas en el tipo de usuario actual
+  const filteredConversations = getFilteredConversations();
+
+  useEffect(() => {
+    // Este efecto se ejecuta cada vez que las conversaciones cambian
+  }, [filteredConversations]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -95,21 +77,30 @@ const ChatListScreen = () => {
         </View>
 
         {/* Message List */}
-        <FlatList
-          data={chatList}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-        />
+        {filteredConversations.length > 0 ? (
+          <FlatList
+            data={filteredConversations}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {currentUser.type === "persona"
+                ? "No hay mensajes aún. Comienza una conversación con una organización."
+                : "No hay mensajes aún. Espera a que una persona inicie una conversación."}
+            </Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: THEME.bgColor, // Usar el color de fondo del tema
   },
   container: {
     flex: 1,
@@ -125,12 +116,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginLeft: 10,
-    color: THEME.primary,
+    color: THEME.primary, // Usar el color primario del tema
   },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f1f1f1",
+    backgroundColor: THEME.grayLight, // Usar un color de fondo claro del tema
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -139,13 +130,14 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     marginLeft: 10,
+    color: THEME.dark, // Usar un color de texto oscuro del tema
   },
   chatItem: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#EEE",
+    borderBottomColor: THEME.grayLight, // Usar un color de borde claro del tema
   },
   avatar: {
     width: 50,
@@ -164,17 +156,18 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "bold",
+    color: THEME.dark, // Usar un color de texto oscuro del tema
   },
   time: {
     fontSize: 12,
-    color: "#666",
+    color: THEME.gray, // Usar un color gris del tema
   },
   lastMessage: {
     fontSize: 14,
-    color: "#888",
+    color: THEME.gray, // Usar un color gris del tema
   },
   unreadBadge: {
-    backgroundColor: "#FF6B81",
+    backgroundColor: THEME.danger, // Usar un color de alerta del tema
     borderRadius: 10,
     width: 20,
     height: 20,
@@ -182,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   unreadCount: {
-    color: "#fff",
+    color: THEME.white, // Usar el color blanco del tema
     fontSize: 12,
     fontWeight: "bold",
   },
@@ -190,15 +183,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     alignSelf: "center",
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Usar el color primario del tema
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 30,
     flexDirection: "row",
-    alignItems: "left",
+    alignItems: "center",
   },
   newChatButtonText: {
-    color: "#fff",
+    color: THEME.white, // Usar el color blanco del tema
     fontWeight: "bold",
   },
 });

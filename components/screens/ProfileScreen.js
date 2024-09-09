@@ -218,12 +218,12 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: THEME.bgColor, // Usar el color de fondo del tema
   },
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: THEME.bgColor, // Usar el color de fondo del tema
   },
   header: {
     flexDirection: "row",
@@ -250,20 +250,20 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 24,
     fontWeight: "bold",
-    color: THEME.black,
+    color: THEME.black, // Color de texto negro del tema
   },
   inputSpacing: {
     marginVertical: 10,
   },
   profileJob: {
     fontSize: 16,
-    color: THEME.gray,
+    color: THEME.gray, // Usar el color gris del tema
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: THEME.grayLight,
+    borderBottomColor: THEME.grayLight, // Usar el color de borde claro del tema
     marginBottom: 20,
     paddingBottom: 5,
   },
@@ -271,27 +271,27 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     marginLeft: 10,
-    color: THEME.black,
+    color: THEME.black, // Usar el color negro del tema
   },
   button: {
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Usar el color primario del tema
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 10,
   },
   buttonText: {
-    color: "#fff",
+    color: THEME.white, // Usar el color blanco del tema
     fontSize: 16,
     fontWeight: "bold",
   },
   upgradeButton: {
-    backgroundColor: "#fff",
+    backgroundColor: THEME.white, // Usar el color blanco del tema
     borderWidth: 2,
-    borderColor: THEME.primary,
+    borderColor: THEME.primary, // Usar el color primario del tema
   },
   upgradeButtonText: {
-    color: THEME.primary,
+    color: THEME.primary, // Usar el color primario del tema
   },
   modalContainer: {
     flex: 1,
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: THEME.white, // Usar el color blanco del tema
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -308,20 +308,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+    color: THEME.primary, // Usar el color primario del tema
   },
   modalText: {
     fontSize: 16,
     marginBottom: 20,
+    color: THEME.secondary, // Usar el color secundario del tema
   },
   subscribeButton: {
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Usar el color primario del tema
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
     marginBottom: 10,
   },
   subscribeButtonText: {
-    color: "white",
+    color: THEME.white, // Usar el color blanco del tema
     fontSize: 16,
   },
   closeButton: {
@@ -329,20 +331,20 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeButtonText: {
-    color: THEME.primary,
+    color: THEME.primary, // Usar el color primario del tema
     fontSize: 16,
   },
   priceText: {
     fontSize: 50,
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Usar el color primario del tema
     textAlign: "center",
     marginVertical: 20,
   },
   monthText: {
     fontSize: 30,
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Usar el color primario del tema
     textAlign: "center",
     paddingBottom: 20,
   },

@@ -13,6 +13,7 @@ import CreatePetScreen from "../screens/CreatePetScreen";
 import ChatListScreen from "../screens/ChatListScreen";
 import ListOrganizationScreen from "../screens/ListOrganizationScreen";
 import { UserContext } from "../context/UserContext"; // Importar el contexto
+import theme from "../constants/theme";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,8 +33,12 @@ function BottomTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarInactiveTintColor: THEME.dark,
+        tabBarInactiveTintColor: THEME.white,
         tabBarActiveTintColor: THEME.primary,
+        tabBarStyle: {
+          backgroundColor: THEME.menuBackground, // Usar el color del theme
+          borderTopColor: "transparent",
+        },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           let rn = route.name;

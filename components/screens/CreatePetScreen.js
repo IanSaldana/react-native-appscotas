@@ -322,7 +322,7 @@ const CreatePetScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: THEME.bgColor, // Fondo del tema
   },
   container: {
     padding: 1,
@@ -334,21 +334,23 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: "left",
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Color primario del tema
     marginBottom: 20,
   },
   label: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 8,
+    color: THEME.dark, // Texto en color oscuro del tema
   },
   input: {
     height: 40,
-    borderColor: "#E0E0E0",
+    borderColor: THEME.grayLight, // Borde en gris claro del tema
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 16,
     paddingHorizontal: 10,
+    backgroundColor: THEME.white, // Fondo blanco del tema
   },
   createBtn: {
     textAlign: "center",
@@ -357,32 +359,33 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 55,
     marginTop: 20,
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Color primario del tema
     borderRadius: 40,
   },
   createText: {
-    color: THEME.white,
+    color: THEME.white, // Texto en blanco
     fontSize: 16,
     fontWeight: "bold",
   },
   textArea: {
     height: 80,
-    borderColor: "#E0E0E0",
+    borderColor: THEME.grayLight, // Borde en gris claro del tema
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 16,
     paddingHorizontal: 10,
     textAlignVertical: "top",
+    backgroundColor: THEME.white, // Fondo blanco del tema
   },
   photoButton: {
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Color primario del tema
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
     marginBottom: 16,
   },
   photoButtonText: {
-    color: "#FFF",
+    color: THEME.white, // Texto en blanco
     textAlign: "center",
     fontWeight: "bold",
   },
@@ -405,9 +408,9 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: THEME.grayLight, // Borde en gris claro del tema
     borderRadius: 8,
-    color: "black",
+    color: THEME.dark, // Texto en color oscuro
     paddingRight: 30,
     marginBottom: 15,
   },
@@ -416,9 +419,9 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 0.5,
-    borderColor: "#ccc",
+    borderColor: THEME.grayLight, // Borde en gris claro del tema
     borderRadius: 8,
-    color: "black",
+    color: THEME.dark, // Texto en color oscuro
     paddingRight: 30,
     marginBottom: 15,
   },

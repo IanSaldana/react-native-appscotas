@@ -2,44 +2,43 @@ import React from "react";
 import {
   View,
   Text,
-  Image,
-  TouchableOpacity,
   FlatList,
   StyleSheet,
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
+import { useFavorites } from "../context/FavouriteContext"; // Contexto de favoritos
+import SearchBarWithFilters from "../modules/SearchBarWithFilters"; // Componente de búsqueda con filtros
 import { THEME } from "../constants";
-import { useFavorites } from "../context/FavouriteContext"; // Importa el contexto de favoritos
 
 const FavoritesScreen = () => {
-  const navigation = useNavigation();
-  const { favorites } = useFavorites(); // Obtén los favoritos del contexto
+  const { favorites } = useFavorites();
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => navigation.navigate("PetProfile", { petId: item.id })}
-    >
+    <View style={styles.itemContainer}>
       <Image source={item.image} style={styles.petImage} />
       <View style={styles.nameContainer}>
         <Text style={styles.petName}>{item.name}</Text>
-        <Icon name="heart" size={20} color="#FF007F" style={styles.heartIcon} />
+        <Icon
+          name="heart"
+          size={20}
+          color={THEME.danger}
+          style={styles.heartIcon}
+        />
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
     <SafeAreaView style={styles.main}>
       <StatusBar translucent={false} />
       <View style={styles.container}>
-        <View>
-          <Text style={styles.headerTitle}>Favoritos</Text>
-        </View>
+        <Text style={styles.headerTitle}>Favoritos</Text>
+        {/* Search Bar con filtros */}
+        <SearchBarWithFilters />
+
         <FlatList
-          data={favorites} // Usa los datos de favoritos del contexto
+          data={favorites}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
@@ -53,7 +52,7 @@ const FavoritesScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: THEME.bgColor,
   },
   container: {
     padding: 15,
@@ -67,6 +66,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: THEME.primary,
     opacity: 0.9,
+    paddingBottom: 10,
   },
   listContainer: {
     paddingBottom: 20,
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: "#FFF",
-    borderColor: "#E0E0E0",
+    backgroundColor: THEME.white,
+    borderColor: THEME.grayLight,
     borderWidth: 1,
   },
   petImage: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: THEME.dark,
     padding: 10,
   },
 });

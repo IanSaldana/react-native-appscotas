@@ -1,11 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
 
 const ChatScreen = ({ navigation, route }) => {
-  const { userId, userName } = route.params; // Obtener el ID y nombre del usuario desde las rutas
+  const { userId, userName } = route.params;
   const [messages, setMessages] = useState([
     {
       _id: 1,
@@ -97,7 +104,7 @@ const ChatScreen = ({ navigation, route }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       {renderChatHeader()}
 
       <GiftedChat
@@ -108,14 +115,14 @@ const ChatScreen = ({ navigation, route }) => {
         renderSend={renderSend}
         placeholder="Message"
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: THEME.bgColor, // Fondo del tema
   },
   header: {
     flexDirection: "row",
@@ -124,7 +131,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#EEE",
+    borderBottomColor: THEME.grayLight, // Color del borde inferior
   },
   profileImage: {
     width: 40,
@@ -138,12 +145,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    color: "#000",
+    color: THEME.dark, // Texto en color oscuro
     fontWeight: "bold",
   },
   headerSubtitle: {
     fontSize: 14,
-    color: "#666",
+    color: THEME.gray, // Texto en gris medio
   },
   headerIcons: {
     flexDirection: "row",

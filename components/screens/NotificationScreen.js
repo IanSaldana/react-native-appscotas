@@ -56,13 +56,20 @@ const NotificationScreen = () => {
         <View>
           <Text style={styles.headerTitle}>Notificaciones</Text>
         </View>
-        <FlatList
-          data={notifications} // Usa los datos de notificaciones del contexto
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
+        {notifications.length > 0 ? ( // Verifica si hay notificaciones
+          <FlatList
+            data={notifications} // Usa los datos de notificaciones del contexto
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : (
+          // Mostrar mensaje si no hay notificaciones
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Aún no llegan solicitudes</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -71,7 +78,7 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: THEME.bgColor, // Utiliza el color de fondo del tema
   },
   container: {
     padding: 15,
@@ -83,55 +90,47 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: "left",
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Color primario del tema
     opacity: 0.9,
   },
   listContainer: {
     paddingBottom: 20,
   },
   itemContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     marginBottom: 20,
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: "#FFF",
-    borderColor: "#E0E0E0",
+    backgroundColor: THEME.white, // Color de fondo blanco del tema
+    borderColor: THEME.grayLight, // Color de borde gris claro del tema
     borderWidth: 1,
-    padding: 15,
   },
   petImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
+    width: "100%",
+    height: 200,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
-  notificationContent: {
-    flex: 1,
+  nameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
   },
-  notificationTitle: {
+  petName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: THEME.dark, // Color de texto oscuro del tema
+    padding: 10,
   },
-  notificationBody: {
-    fontSize: 14,
-    color: "#666",
-    marginVertical: 5,
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  notificationFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 5,
-  },
-  notificationDate: {
-    fontSize: 12,
-    color: "#999",
-  },
-  notificationStatus: {
-    fontSize: 14,
-    color: THEME.primary,
-    fontWeight: "bold",
+  emptyText: {
+    fontSize: 18,
+    color: THEME.gray, // Color de texto gris del tema
+    textAlign: "center",
   },
 });
 

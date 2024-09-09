@@ -51,7 +51,7 @@ const RegisterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registrar</Text>
+      <Text style={styles.title}>Regístrate</Text>
       <TextInput
         style={styles.input}
         placeholder="Nombre"
@@ -91,7 +91,7 @@ const RegisterScreen = () => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrar</Text>
+        <Text style={styles.buttonText}>Guardar</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -106,34 +106,36 @@ const RegisterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: THEME.bgColor, // Usar color de fondo del tema
     justifyContent: "center",
     padding: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Usar color primario del tema
     marginBottom: 20,
     textAlign: "center",
   },
   input: {
     height: 50,
-    borderColor: "#ccc",
+    borderColor: THEME.grayLight, // Usar color de borde claro del tema
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
+    backgroundColor: THEME.white, // Usar color blanco del tema para fondo
   },
   picker: {
     height: 50,
-    borderColor: "#ccc",
+    borderColor: THEME.grayLight, // Usar color de borde claro del tema
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 15,
+    backgroundColor: THEME.white, // Usar color blanco del tema para fondo
   },
   button: {
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Usar color primario del tema
     height: 50,
     borderRadius: 8,
     justifyContent: "center",
@@ -141,38 +143,41 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonText: {
-    color: "#fff",
+    color: THEME.white, // Usar color blanco del tema
     fontSize: 18,
     fontWeight: "bold",
   },
   loginText: {
-    color: THEME.primary,
+    color: THEME.primary, // Usar color primario del tema
     textAlign: "center",
     fontSize: 16,
   },
 });
+
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: THEME.grayLight, // Usar color de borde claro del tema
     borderRadius: 8,
-    color: "black",
+    color: THEME.dark, // Usar color oscuro del tema
     paddingRight: 30, // Para ajustar el ícono en iOS
     marginBottom: 15,
+    backgroundColor: THEME.white, // Usar color blanco del tema para fondo
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 0.5,
-    borderColor: "#ccc",
+    borderColor: THEME.grayLight, // Usar color de borde claro del tema
     borderRadius: 8,
-    color: "black",
+    color: THEME.dark, // Usar color oscuro del tema
     paddingRight: 30, // Para ajustar el ícono en Android
     marginBottom: 15,
+    backgroundColor: THEME.white, // Usar color blanco del tema para fondo
   },
 });
 

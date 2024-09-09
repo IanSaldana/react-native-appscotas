@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import * as React from "react";
 import { THEME } from "../constants";
@@ -37,12 +38,20 @@ const LoginScreen = () => {
     <SafeAreaView style={styles.main}>
       <View style={styles.container}>
         <View style={styles.wFull}>
+          {/* Logo de la aplicación */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../assets/images/logo.jpeg")} // Ruta de la imagen del logo
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
           <View style={styles.row}>
             <Text style={styles.brandName}>Appscotas</Text>
           </View>
 
           <Text style={styles.loginContinueTxt}>
-            Inicia sesión para continuar
+            Encuentra tu mascota ideal!
           </Text>
           <TextInput
             style={styles.input}
@@ -72,7 +81,7 @@ const LoginScreen = () => {
               style={styles.registerBtn}
               onPress={() => navigation.navigate("Register")}
             >
-              <Text style={styles.loginText}>Registrate</Text>
+              <Text style={styles.loginText}>Regístrate</Text>
             </TouchableOpacity>
 
             <TouchableOpacity>
@@ -101,6 +110,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  logo: {
+    width: 100, // Ajusta el tamaño según sea necesario
+    height: 100, // Ajusta el tamaño según sea necesario
+    tintColor: THEME.secondary,
   },
   brandName: {
     fontSize: 62,

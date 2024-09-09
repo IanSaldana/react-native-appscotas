@@ -14,12 +14,17 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { THEME } from "../constants";
 import { UserContext } from "../context/UserContext"; // Importar el contexto de usuario
 import { PetsContext } from "../context/PetsContext"; // Importar el contexto de mascotas
+import SearchBarWithFilters from "../modules/SearchBarWithFilters"; // Importa tu componente reutilizable de SearchBar
 
 const ListOrganizationScreen = () => {
   const navigation = useNavigation();
   const { currentUser } = useContext(UserContext); // Obtener la información del usuario actual
   const { pets } = useContext(PetsContext); // Obtener la lista de mascotas del contexto de mascotas
   const [organizationPets, setOrganizationPets] = useState([]);
+  const [searchText, setSearchText] = useState(""); // Estado para el texto de búsqueda
+  const [selectedSpecies, setSelectedSpecies] = useState(""); // Filtro de especie
+  const [selectedGender, setSelectedGender] = useState(""); // Filtro de género
+  const [selectedAge, setSelectedAge] = useState("Any"); // Filtro de edad
 
   useEffect(() => {
     // Filtrar mascotas por la organización del usuario actual
@@ -31,7 +36,45 @@ const ListOrganizationScreen = () => {
     }
   }, [pets, currentUser]);
 
-  // Función para renderizar cada mascota
+  useEffect(() => {
+    // Filtrar mascotas cada vez que cambien los filtros o el texto de búsqueda
+    filterPets(searchText, selectedSpecies, selectedGender, selectedAge);
+  }, [searchText, selectedSpecies, selectedGender, selectedAge, pets]);
+
+  const filterPets = (search, species, gender, age) => {
+    let filtered = pets.filter((pet) => {
+      const matchName = pet.name.toLowerCase().includes(search.toLowerCase());
+      const matchSpecies = species ? pet.species === species : true;
+      const matchGender = gender ? pet.gender === gender : true;
+      const matchAge =
+        age === "Any"
+          ? true
+          : age === "2 años"
+          ? pet.age <= 2
+          : age === "5 años"
+          ? pet.age <= 5
+          : pet.age >= 8;
+
+      return (
+        matchName &&
+        matchSpecies &&
+        matchGender &&
+        matchAge &&
+        pet.organizationId === currentUser.organizationId
+      );
+    });
+
+    setOrganizationPets(filtered);
+  };
+
+  const resetFilters = () => {
+    setSelectedSpecies("");
+    setSelectedGender("");
+    setSelectedAge("Any");
+    setSearchText("");
+    filterPets("", "", "", "Any");
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
@@ -49,9 +92,19 @@ const ListOrganizationScreen = () => {
     <SafeAreaView style={styles.main}>
       <StatusBar translucent={false} />
       <View style={styles.container}>
-        <Text style={styles.headerTitle}>
-          Lista de Mascotas de la Organización
-        </Text>
+        <Text style={styles.headerTitle}>Lista de Mascotas</Text>
+        {/* Agrega el SearchBar debajo del título */}
+        <SearchBarWithFilters
+          searchText={searchText}
+          setSearchText={setSearchText}
+          applyFilters={() =>
+            filterPets(searchText, selectedSpecies, selectedGender, selectedAge)
+          }
+          resetFilters={resetFilters}
+          setSelectedSpecies={setSelectedSpecies}
+          setSelectedGender={setSelectedGender}
+          setSelectedAge={setSelectedAge}
+        />
         <FlatList
           data={organizationPets} // Usa los datos filtrados de mascotas
           renderItem={renderItem}
@@ -67,7 +120,7 @@ const ListOrganizationScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: THEME.bgColor, // Usar el color blanco del tema
   },
   container: {
     padding: 15,
@@ -79,8 +132,9 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: "left",
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Usar el color primario del tema
     opacity: 0.9,
+    paddingBottom: 10,
   },
   listContainer: {
     paddingBottom: 20,
@@ -89,8 +143,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: "#FFF",
-    borderColor: "#E0E0E0",
+    backgroundColor: THEME.white, // Usar el color blanco del tema
+    borderColor: THEME.grayLight, // Usar el color gris claro del tema
     borderWidth: 1,
   },
   petImage: {
@@ -108,7 +162,7 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: THEME.black, // Usar el color negro del tema
     padding: 10,
   },
 });

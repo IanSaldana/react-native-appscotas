@@ -254,7 +254,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: THEME.bgColor, // Fondo de la pantalla con el color de fondo del tema
   },
   container: {
     padding: 15,
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: "left",
     fontWeight: "bold",
-    color: THEME.primary,
+    color: THEME.primary, // Título con color primario del tema
     opacity: 0.9,
   },
   premiumContainer: {
@@ -284,11 +284,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: "left",
     fontWeight: "bold",
-    color: THEME.gray,
+    color: THEME.secondary, // Subtítulo con color secundario del tema
     opacity: 0.9,
   },
   premiumName: {
-    color: "#f1c232", // Color dorado para usuarios premium
+    color: THEME.warning, // Color de advertencia para usuarios premium
   },
   profileImage: {
     height: 50,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   searchInputContainer: {
     height: 50,
-    backgroundColor: THEME.grayLight,
+    backgroundColor: THEME.grayLight, // Fondo del input de búsqueda
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   sortBtn: {
-    backgroundColor: THEME.black,
+    backgroundColor: THEME.menuBackground, // Fondo del botón de ordenamiento con el color del menú
     height: 50,
     width: 50,
     borderRadius: 10,
@@ -333,17 +333,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semi-transparente
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
   mascotaName: {
-    color: "#FFF",
+    color: THEME.white, // Texto blanco para el nombre de la mascota
     fontSize: 18,
     fontWeight: "bold",
   },
   mascotaDetails: {
-    color: "#DDD",
+    color: THEME.grayLight, // Texto con color gris claro para detalles de la mascota
     fontSize: 14,
   },
   mascotasList: {
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: 300,
-    backgroundColor: "white",
+    backgroundColor: THEME.white, // Fondo blanco del modal
     padding: 20,
     borderRadius: 10,
   },
@@ -366,10 +366,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
+    color: THEME.primary, // Título del modal en color primario
   },
   filterLabel: {
     fontSize: 16,
     marginBottom: 10,
+    color: THEME.secondary, // Etiqueta de filtro con color secundario
   },
   vaccinatedFilter: {
     flexDirection: "row",
@@ -379,19 +382,41 @@ const styles = StyleSheet.create({
   vaccinatedOption: {
     padding: 10,
     borderRadius: 5,
-    backgroundColor: THEME.grayLight,
+    backgroundColor: THEME.grayLight, // Opción de filtro con color gris claro
   },
   selectedOption: {
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Opción seleccionada con color primario
   },
   optionText: {
-    color: THEME.white,
+    color: THEME.white, // Texto de la opción en blanco
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  // utils
+  applyBtn: {
+    flex: 1,
+    backgroundColor: THEME.primary, // Botón de aplicar con color primario
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 8,
+    marginRight: 5,
+  },
+  applyBtnText: {
+    color: THEME.white, // Texto del botón en blanco
+    fontWeight: "bold",
+  },
+  clearBtn: {
+    flex: 1,
+    backgroundColor: THEME.gray, // Botón de limpiar con color gris
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  clearBtnText: {
+    color: THEME.white, // Texto del botón en blanco
+    fontWeight: "bold",
+  },
   wFull: {
     width: "100%",
   },
@@ -403,71 +428,6 @@ const styles = StyleSheet.create({
   },
   mr7: {
     marginRight: 7,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: 300,
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  filterLabel: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  vaccinatedFilter: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 20,
-  },
-  vaccinatedOption: {
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: THEME.grayLight,
-  },
-  selectedOption: {
-    backgroundColor: THEME.primary,
-  },
-  optionText: {
-    color: THEME.white,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  applyBtn: {
-    flex: 1,
-    backgroundColor: THEME.primary,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 8,
-    marginRight: 5,
-  },
-  applyBtnText: {
-    color: "#FFF",
-    fontWeight: "bold",
-  },
-  clearBtn: {
-    flex: 1,
-    backgroundColor: THEME.gray,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 8,
-  },
-  clearBtnText: {
-    color: "#FFF",
-    fontWeight: "bold",
   },
 });
 

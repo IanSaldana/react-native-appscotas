@@ -38,6 +38,7 @@ const AdoptScreen = () => {
       status: "Por revisar",
       date: new Date().toLocaleString(),
       petDetails: petDetails, // Incluye los detalles completos de la mascota
+      adopterStory: adopterStory,
       history: [
         { date: new Date().toLocaleString(), text: "Solicitud enviada" },
       ],
@@ -116,7 +117,7 @@ const AdoptScreen = () => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: THEME.white,
+    backgroundColor: THEME.bgColor, // Fondo general de la pantalla
   },
   container: {
     paddingHorizontal: 20,
@@ -131,10 +132,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: THEME.dark,
+    color: THEME.primary, // Color del texto del título del encabezado
   },
   petDetailsCard: {
-    backgroundColor: THEME.white,
+    backgroundColor: THEME.white, // Fondo de la tarjeta de detalles de la mascota
     borderRadius: 16,
     padding: 15,
     marginBottom: 20,
@@ -157,19 +158,19 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: THEME.dark,
+    color: THEME.dark, // Color del nombre de la mascota
   },
   petBreed: {
     fontSize: 14,
-    color: THEME.gray,
+    color: THEME.gray, // Color de la raza de la mascota
   },
   tagsContainer: {
     flexDirection: "row",
     marginTop: 5,
   },
   tag: {
-    backgroundColor: THEME.secondary,
-    color: THEME.white,
+    backgroundColor: THEME.secondary, // Fondo de las etiquetas
+    color: THEME.white, // Color del texto de las etiquetas
     padding: 5,
     borderRadius: 5,
     marginRight: 8,
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginLeft: 5,
-    color: THEME.gray,
+    color: THEME.gray, // Color del texto de la ubicación
   },
   formContainer: {
     marginTop: 20,
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 5,
-    color: THEME.dark,
+    color: THEME.dark, // Color del texto de las etiquetas del formulario
   },
   input: {
     height: 40,
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
     paddingHorizontal: 10,
-    backgroundColor: THEME.grayLight,
+    backgroundColor: THEME.grayLight, // Fondo de los campos de entrada
   },
   textArea: {
     height: 80,
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 10,
     textAlignVertical: "top",
-    backgroundColor: THEME.grayLight,
+    backgroundColor: THEME.grayLight, // Fondo de las áreas de texto
   },
   sendButton: {
     textAlign: "center",
@@ -217,13 +218,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 55,
-    backgroundColor: THEME.primary,
+    backgroundColor: THEME.primary, // Fondo del botón de envío
     borderRadius: 40,
   },
   sendButtonText: {
-    color: THEME.white,
+    color: THEME.white, // Color del texto del botón de envío
     fontSize: 16,
     fontWeight: "bold",
+  },
+  attributeCard: {
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: THEME.menuBackground, // Fondo del atributo
+    borderRadius: 10, // Bordes curvados de la tarjeta
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  attributeTitle: {
+    color: THEME.gray, // Color del título del atributo
+  },
+  attributeValue: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: THEME.dark, // Color del valor del atributo
   },
 });
 
